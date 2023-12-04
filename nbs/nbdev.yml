@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "featsql"
+  site-url: "https://ravennaro.github.io/featsql"
+  description: "Create features with sql"
+  repo-branch: main
+  repo-url: "https://github.com/ravennaro/featsql"
