@@ -5,4 +5,6 @@ d = { 'settings': { 'branch': 'main',
                 'doc_host': 'https://ravennaro.github.io',
                 'git_url': 'https://github.com/ravennaro/featsql',
                 'lib_path': 'featsql'},
-  'syms': {'featsql.core': {'featsql.core.foo': ('core.html#foo', 'featsql/core.py')}}}
+  'syms': { 'featsql.core': { 'featsql.core.func_query_final': ('core.html#func_query_final', 'featsql/core.py'),
+                              'featsql.core.func_query_janela': ('core.html#func_query_janela', 'featsql/core.py'),
+                              'featsql.core.func_query_join': ('core.html#func_query_join', 'featsql/core.py')}}}
