@@ -80,20 +80,20 @@ df_data.head()
     }
 </style>
 
-|     | ID  | SAFRA      | FEAT_NUM1 | FEAT_NUM2 | FEAT_CAT1 |
-|-----|-----|------------|-----------|-----------|-----------|
-| 0   | 1   | 2023-01-01 | -20       | -14       | B         |
-| 1   | 2   | 2023-01-01 | 34        | 14        | B         |
-| 2   | 3   | 2023-01-01 | 76        | 14        | C         |
-| 3   | 4   | 2023-01-01 | 15        | 44        | C         |
-| 4   | 5   | 2023-01-01 | -81       | 56        | B         |
+|     | ID  | SAFRA      | FEAT_NUM1 | FEAT_NUM2 | FEAT_CAT1 | FEAT_CAT2 |
+|-----|-----|------------|-----------|-----------|-----------|-----------|
+| 0   | 1   | 2023-01-01 | 33        | 15        | C         | B         |
+| 1   | 2   | 2023-01-01 | -36       | 82        | C         | B         |
+| 2   | 3   | 2023-01-01 | 89        | 33        | C         | B         |
+| 3   | 4   | 2023-01-01 | -34       | -94       | C         | B         |
+| 4   | 5   | 2023-01-01 | 99        | 26        | B         | B         |
 
 </div>
 
 ## Criação de variáveis numéricas
 
 ``` python
-tb_publico='tb_spine'
+tb_publico = 'tb_spine'
 tb_feat = 'tb_feat'
 id = 'ID'
 safra_ref = 'SAFRA_REF'
@@ -101,15 +101,12 @@ safra = 'SAFRA'
 target = 'Target'
 feat_num_lista = ['FEAT_NUM1','FEAT_NUM2']
 lista_janela = [1,2,3]
+query_final_num = create_query_num(tb_publico, tb_feat, lista_janela,feat_num_lista, id, safra_ref, target, safra)
 ```
 
 ``` python
-query_final = func_query_final(tb_publico, lista_janela,feat_num_lista, id, safra_ref, target, tb_feat, safra)
-```
-
-``` python
-df = pd.read_sql(query_final, engine)
-df.head()
+df_num = pd.read_sql(query_final_num, engine)
+df_num.head()
 ```
 
 <div>
@@ -127,160 +124,35 @@ df.head()
 
 |     | ID  | SAFRA_REF  | Target | FEAT_NUM1_SUM_1M | FEAT_NUM1_MIN_1M | FEAT_NUM1_MAX_1M | FEAT_NUM1_AGV_1M | FEAT_NUM2_SUM_1M | FEAT_NUM2_MIN_1M | FEAT_NUM2_MAX_1M | FEAT_NUM2_AGV_1M | FEAT_NUM1_SUM_2M | FEAT_NUM1_MIN_2M | FEAT_NUM1_MAX_2M | FEAT_NUM1_AGV_2M | FEAT_NUM2_SUM_2M | FEAT_NUM2_MIN_2M | FEAT_NUM2_MAX_2M | FEAT_NUM2_AGV_2M | FEAT_NUM1_SUM_3M | FEAT_NUM1_MIN_3M | FEAT_NUM1_MAX_3M | FEAT_NUM1_AGV_3M | FEAT_NUM2_SUM_3M | FEAT_NUM2_MIN_3M | FEAT_NUM2_MAX_3M | FEAT_NUM2_AGV_3M |
 |-----|-----|------------|--------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|
-| 0   | 4   | 2023-02-01 | 0      | 15               | 15               | 15               | 15.0             | 44               | 44               | 44               | 44.0             | 15               | 15               | 15               | 15.0             | 44               | 44               | 44               | 44.0             | 15               | 15               | 15               | 15.0             | 44               | 44               | 44               | 44.0             |
-| 1   | 5   | 2023-02-01 | 0      | -81              | -81              | -81              | -81.0            | 56               | 56               | 56               | 56.0             | -81              | -81              | -81              | -81.0            | 56               | 56               | 56               | 56.0             | -81              | -81              | -81              | -81.0            | 56               | 56               | 56               | 56.0             |
-| 2   | 6   | 2023-02-01 | 0      | -59              | -59              | -59              | -59.0            | 23               | 23               | 23               | 23.0             | -59              | -59              | -59              | -59.0            | 23               | 23               | 23               | 23.0             | -59              | -59              | -59              | -59.0            | 23               | 23               | 23               | 23.0             |
-| 3   | 7   | 2023-02-01 | 0      | 93               | 93               | 93               | 93.0             | 43               | 43               | 43               | 43.0             | 93               | 93               | 93               | 93.0             | 43               | 43               | 43               | 43.0             | 93               | 93               | 93               | 93.0             | 43               | 43               | 43               | 43.0             |
-| 4   | 10  | 2023-02-01 | 0      | 92               | 92               | 92               | 92.0             | 20               | 20               | 20               | 20.0             | 92               | 92               | 92               | 92.0             | 20               | 20               | 20               | 20.0             | 92               | 92               | 92               | 92.0             | 20               | 20               | 20               | 20.0             |
+| 0   | 4   | 2023-02-01 | 0      | -34              | -34              | -34              | -34.0            | -94              | -94              | -94              | -94.0            | -34              | -34              | -34              | -34.0            | -94              | -94              | -94              | -94.0            | -34              | -34              | -34              | -34.0            | -94              | -94              | -94              | -94.0            |
+| 1   | 5   | 2023-02-01 | 0      | 99               | 99               | 99               | 99.0             | 26               | 26               | 26               | 26.0             | 99               | 99               | 99               | 99.0             | 26               | 26               | 26               | 26.0             | 99               | 99               | 99               | 99.0             | 26               | 26               | 26               | 26.0             |
+| 2   | 6   | 2023-02-01 | 0      | 18               | 18               | 18               | 18.0             | -55              | -55              | -55              | -55.0            | 18               | 18               | 18               | 18.0             | -55              | -55              | -55              | -55.0            | 18               | 18               | 18               | 18.0             | -55              | -55              | -55              | -55.0            |
+| 3   | 7   | 2023-02-01 | 0      | -44              | -44              | -44              | -44.0            | 4                | 4                | 4                | 4.0              | -44              | -44              | -44              | -44.0            | 4                | 4                | 4                | 4.0              | -44              | -44              | -44              | -44.0            | 4                | 4                | 4                | 4.0              |
+| 4   | 10  | 2023-02-01 | 0      | 67               | 67               | 67               | 67.0             | 85               | 85               | 85               | 85.0             | 67               | 67               | 67               | 67.0             | 85               | 85               | 85               | 85.0             | 67               | 67               | 67               | 67.0             | 85               | 85               | 85               | 85.0             |
 
 </div>
 
 ``` python
-print(query_final)
+print(query_final_num)
 ```
 
+    NameError: name 'query_final' is not defined
 
-        with 
-        tb_public as (
-            SELECT 
-                *
-            FROM tb_spine
-        ),
-        
-            -- Criação de variáveis de janela de 1M
-            tb_janela_1M as(
-                SELECT 
-                    tb_public.ID,
-                    tb_public.SAFRA_REF,
-                    tb_public.Target,
-                    
-                 -- Criação de variáveis numéricas a partir da coluna FEAT_NUM1 para a janela 1
-                SUM(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_SUM_1M,
-                MIN(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MIN_1M,
-                MAX(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MAX_1M,
-                AVG(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_AGV_1M,
-                
-                 -- Criação de variáveis numéricas a partir da coluna FEAT_NUM2 para a janela 1
-                SUM(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_SUM_1M,
-                MIN(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MIN_1M,
-                MAX(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MAX_1M,
-                AVG(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_AGV_1M
+``` python
+tb_publico = 'tb_spine'
+tb_feat = 'tb_feat'
+id = 'ID'
+safra_ref = 'SAFRA_REF'
+safra = 'SAFRA'
+target = 'Target'
+feat_num_lista = ['FEAT_CAT1','FEAT_CAT2']
+lista_janela = [1,2,3]
+query_final_cat = create_query_cat(tb_publico, tb_feat, lista_janela,feat_num_lista, id, safra_ref, target, safra)
+```
 
-                FROM tb_public
-                LEFT JOIN tb_feat 
-                ON  tb_public.ID = tb_feat.ID
-                AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+1 months')) >= tb_public.SAFRA_REF)
-                    AND (tb_feat.SAFRA < tb_public.SAFRA_REF)
-                GROUP BY tb_public.ID, tb_public.SAFRA_REF
-            ),
-            
-            -- Criação de variáveis de janela de 2M
-            tb_janela_2M as(
-                SELECT 
-                    tb_public.ID,
-                    tb_public.SAFRA_REF,
-                    tb_public.Target,
-                    
-                 -- Criação de variáveis numéricas a partir da coluna FEAT_NUM1 para a janela 2
-                SUM(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_SUM_2M,
-                MIN(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MIN_2M,
-                MAX(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MAX_2M,
-                AVG(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_AGV_2M,
-                
-                 -- Criação de variáveis numéricas a partir da coluna FEAT_NUM2 para a janela 2
-                SUM(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_SUM_2M,
-                MIN(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MIN_2M,
-                MAX(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MAX_2M,
-                AVG(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_AGV_2M
+    NameError: name 'create_query_cat' is not defined
 
-                FROM tb_public
-                LEFT JOIN tb_feat 
-                ON  tb_public.ID = tb_feat.ID
-                AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+2 months')) >= tb_public.SAFRA_REF)
-                    AND (tb_feat.SAFRA < tb_public.SAFRA_REF)
-                GROUP BY tb_public.ID, tb_public.SAFRA_REF
-            ),
-            
-            -- Criação de variáveis de janela de 3M
-            tb_janela_3M as(
-                SELECT 
-                    tb_public.ID,
-                    tb_public.SAFRA_REF,
-                    tb_public.Target,
-                    
-                 -- Criação de variáveis numéricas a partir da coluna FEAT_NUM1 para a janela 3
-                SUM(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_SUM_3M,
-                MIN(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MIN_3M,
-                MAX(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MAX_3M,
-                AVG(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_AGV_3M,
-                
-                 -- Criação de variáveis numéricas a partir da coluna FEAT_NUM2 para a janela 3
-                SUM(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_SUM_3M,
-                MIN(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MIN_3M,
-                MAX(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MAX_3M,
-                AVG(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_AGV_3M
-
-                FROM tb_public
-                LEFT JOIN tb_feat 
-                ON  tb_public.ID = tb_feat.ID
-                AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+3 months')) >= tb_public.SAFRA_REF)
-                    AND (tb_feat.SAFRA < tb_public.SAFRA_REF)
-                GROUP BY tb_public.ID, tb_public.SAFRA_REF
-            ),
-            
-
-        tb_join as (
-            SELECT 
-                *
-            FROM tb_public 
-            
-            LEFT JOIN tb_janela_1M
-                ON tb_public.ID = tb_janela_1M.ID
-                AND tb_public.SAFRA_REF = tb_janela_1M.SAFRA_REF
-        
-            LEFT JOIN tb_janela_2M
-                ON tb_public.ID = tb_janela_2M.ID
-                AND tb_public.SAFRA_REF = tb_janela_2M.SAFRA_REF
-        
-            LEFT JOIN tb_janela_3M
-                ON tb_public.ID = tb_janela_3M.ID
-                AND tb_public.SAFRA_REF = tb_janela_3M.SAFRA_REF
-        
-        )
-            
-        SELECT 
-            tb_join.ID,
-            tb_join.SAFRA_REF,
-            tb_join.Target,
-            
-                tb_join.FEAT_NUM1_SUM_1M,
-                tb_join.FEAT_NUM1_MIN_1M,
-                tb_join.FEAT_NUM1_MAX_1M,
-                tb_join.FEAT_NUM1_AGV_1M,
-                
-                tb_join.FEAT_NUM2_SUM_1M,
-                tb_join.FEAT_NUM2_MIN_1M,
-                tb_join.FEAT_NUM2_MAX_1M,
-                tb_join.FEAT_NUM2_AGV_1M,
-                
-                tb_join.FEAT_NUM1_SUM_2M,
-                tb_join.FEAT_NUM1_MIN_2M,
-                tb_join.FEAT_NUM1_MAX_2M,
-                tb_join.FEAT_NUM1_AGV_2M,
-                
-                tb_join.FEAT_NUM2_SUM_2M,
-                tb_join.FEAT_NUM2_MIN_2M,
-                tb_join.FEAT_NUM2_MAX_2M,
-                tb_join.FEAT_NUM2_AGV_2M,
-                
-                tb_join.FEAT_NUM1_SUM_3M,
-                tb_join.FEAT_NUM1_MIN_3M,
-                tb_join.FEAT_NUM1_MAX_3M,
-                tb_join.FEAT_NUM1_AGV_3M,
-                
-                tb_join.FEAT_NUM2_SUM_3M,
-                tb_join.FEAT_NUM2_MIN_3M,
-                tb_join.FEAT_NUM2_MAX_3M,
-                tb_join.FEAT_NUM2_AGV_3M
-        FROM tb_join
-        
+``` python
+df_cat = pd.read_sql(query_final_cat, engine)
+df_cat.head()
+```
