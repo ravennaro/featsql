@@ -1,0 +1,7 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 01_creation_sqlite.ipynb
+      - 02_creation_mysql.ipynb
+      - 03_creation_snowflake.ipynb
