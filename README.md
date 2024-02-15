@@ -14,6 +14,9 @@ from featsql.featsnow import *
 import pandas as pd
 from sqlalchemy import create_engine
 import mysql.connector
+```
+
+``` python
 pd.set_option('display.max_columns', None)
 ```
 
