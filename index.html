@@ -1,0 +1,4913 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Create features with sql">
+
+<title>featsql</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="featsql">
+<meta property="og:description" content="Create features with sql">
+<meta property="og:site_name" content="featsql">
+<meta name="twitter:title" content="featsql">
+<meta name="twitter:description" content="Create features with sql">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">featsql</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">featsql</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">featsql</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./creation_sqlite.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Creation sqlite</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./creation_mysql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Creation MySQL</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./creation_snowflake.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Creation Snowflake</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#imports" id="toc-imports" class="nav-link active" data-scroll-target="#imports">Imports</a></li>
+  <li><a href="#install" id="toc-install" class="nav-link" data-scroll-target="#install">Install</a></li>
+  <li><a href="#sqlite" id="toc-sqlite" class="nav-link" data-scroll-target="#sqlite">1. SQLITE</a>
+  <ul class="collapse">
+  <li><a href="#configurando-a-engine" id="toc-configurando-a-engine" class="nav-link" data-scroll-target="#configurando-a-engine">Configurando a engine</a></li>
+  <li><a href="#visão-inicial-do-público" id="toc-visão-inicial-do-público" class="nav-link" data-scroll-target="#visão-inicial-do-público">Visão inicial do público</a></li>
+  <li><a href="#visão-inicial-da-tabela-de-variáveis" id="toc-visão-inicial-da-tabela-de-variáveis" class="nav-link" data-scroll-target="#visão-inicial-da-tabela-de-variáveis">Visão inicial da tabela de variáveis</a></li>
+  <li><a href="#criação-de-variáveis-numéricas" id="toc-criação-de-variáveis-numéricas" class="nav-link" data-scroll-target="#criação-de-variáveis-numéricas">Criação de variáveis numéricas</a></li>
+  <li><a href="#criação-de-variáveis-categóricas" id="toc-criação-de-variáveis-categóricas" class="nav-link" data-scroll-target="#criação-de-variáveis-categóricas">Criação de variáveis categóricas</a></li>
+  <li><a href="#criação-de-variáveis-agragadas" id="toc-criação-de-variáveis-agragadas" class="nav-link" data-scroll-target="#criação-de-variáveis-agragadas">Criação de variáveis agragadas</a></li>
+  </ul></li>
+  <li><a href="#mysql" id="toc-mysql" class="nav-link" data-scroll-target="#mysql">2. MySQL</a>
+  <ul class="collapse">
+  <li><a href="#configurando-conexão" id="toc-configurando-conexão" class="nav-link" data-scroll-target="#configurando-conexão">Configurando conexão</a></li>
+  <li><a href="#visão-inicial-do-público-1" id="toc-visão-inicial-do-público-1" class="nav-link" data-scroll-target="#visão-inicial-do-público-1">Visão inicial do público</a></li>
+  <li><a href="#visão-inicial-da-tabela-de-variáveis-1" id="toc-visão-inicial-da-tabela-de-variáveis-1" class="nav-link" data-scroll-target="#visão-inicial-da-tabela-de-variáveis-1">Visão inicial da tabela de variáveis</a></li>
+  <li><a href="#criação-de-variáveis-numéricas-1" id="toc-criação-de-variáveis-numéricas-1" class="nav-link" data-scroll-target="#criação-de-variáveis-numéricas-1">Criação de variáveis numéricas</a></li>
+  <li><a href="#criação-de-variáveis-categóricas-1" id="toc-criação-de-variáveis-categóricas-1" class="nav-link" data-scroll-target="#criação-de-variáveis-categóricas-1">Criação de variáveis categóricas</a></li>
+  <li><a href="#criação-de-variáveis-agragadas-1" id="toc-criação-de-variáveis-agragadas-1" class="nav-link" data-scroll-target="#criação-de-variáveis-agragadas-1">Criação de variáveis agragadas</a></li>
+  </ul></li>
+  <li><a href="#snowflake" id="toc-snowflake" class="nav-link" data-scroll-target="#snowflake">3. Snowflake</a>
+  <ul class="collapse">
+  <li><a href="#criação-de-variáveis-numéricas-2" id="toc-criação-de-variáveis-numéricas-2" class="nav-link" data-scroll-target="#criação-de-variáveis-numéricas-2">Criação de variáveis numéricas</a></li>
+  <li><a href="#criação-de-variáveis-categóricas-2" id="toc-criação-de-variáveis-categóricas-2" class="nav-link" data-scroll-target="#criação-de-variáveis-categóricas-2">Criação de variáveis categóricas</a></li>
+  <li><a href="#criação-de-variáveis-agragadas-2" id="toc-criação-de-variáveis-agragadas-2" class="nav-link" data-scroll-target="#criação-de-variáveis-agragadas-2">Criação de variáveis agragadas</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/ravennaro/featsql/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">featsql</h1>
+</div>
+
+<div>
+  <div class="description">
+    Create features with sql
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<div id="cell-2" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> featsql.featsqlite <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> featsql.featmysql <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> featsql.featsnow <span class="im">import</span> <span class="op">*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="imports" class="level2">
+<h2 class="anchored" data-anchor-id="imports">Imports</h2>
+<div id="cell-4" class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-5" class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> mysql.connector</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sqlalchemy <span class="im">import</span> create_engine</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>pd.set_option(<span class="st">'display.max_columns'</span>, <span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="install" class="level2">
+<h2 class="anchored" data-anchor-id="install">Install</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install featsql</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="sqlite" class="level2">
+<h2 class="anchored" data-anchor-id="sqlite">1. SQLITE</h2>
+<section id="configurando-a-engine" class="level3">
+<h3 class="anchored" data-anchor-id="configurando-a-engine">Configurando a engine</h3>
+<div id="cell-10" class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>url_db <span class="op">=</span> <span class="st">"sqlite:///../../data/mydatabase.db"</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>engine <span class="op">=</span> create_engine(url_db)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visão-inicial-do-público" class="level3">
+<h3 class="anchored" data-anchor-id="visão-inicial-do-público">Visão inicial do público</h3>
+<p>Primeiro vamos observar o formato da tabela spine</p>
+<div id="cell-13" class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df_spine <span class="op">=</span> pd.read_sql(<span class="st">"SELECT * FROM tb_spine"</span>, engine)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df_spine.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">SAFRA_REF</th>
+<th data-quarto-table-cell-role="th">Target</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>4</td>
+<td>2023-02-01</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>5</td>
+<td>2023-02-01</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>6</td>
+<td>2023-02-01</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>7</td>
+<td>2023-02-01</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>10</td>
+<td>2023-02-01</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="visão-inicial-da-tabela-de-variáveis" class="level3">
+<h3 class="anchored" data-anchor-id="visão-inicial-da-tabela-de-variáveis">Visão inicial da tabela de variáveis</h3>
+<p>A tabela de variáveis contém 4 variáveis, duas sendo numéricas e duas categórica. Perceba que existem mais ID’s únicos e datas disponíveis nessa tabela do que na tabela spine, caso que ocorre no dia a dia.</p>
+<div id="cell-16" class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df_data <span class="op">=</span> pd.read_sql(<span class="st">"SELECT * FROM tb_feat"</span>, engine)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df_data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">SAFRA</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT1</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>1</td>
+<td>2023-01-01</td>
+<td>-97</td>
+<td>-44</td>
+<td>A</td>
+<td>C</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>2</td>
+<td>2023-01-01</td>
+<td>89</td>
+<td>67</td>
+<td>C</td>
+<td>B</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>3</td>
+<td>2023-01-01</td>
+<td>53</td>
+<td>24</td>
+<td>A</td>
+<td>B</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>4</td>
+<td>2023-01-01</td>
+<td>-40</td>
+<td>62</td>
+<td>B</td>
+<td>C</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>5</td>
+<td>2023-01-01</td>
+<td>41</td>
+<td>62</td>
+<td>B</td>
+<td>B</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="criação-de-variáveis-numéricas" class="level3">
+<h3 class="anchored" data-anchor-id="criação-de-variáveis-numéricas">Criação de variáveis numéricas</h3>
+<p>A função sqlite_create_query_num() cria um texto com a query para a criação de variáveis com as operações soma, mínimo, máximo e média das variáveis listadas em feat_num_lista e com a janela de tempo listada em lista_janela.</p>
+<div id="cell-19" class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>tb_publico <span class="op">=</span> <span class="st">'tb_spine'</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>tb_feat <span class="op">=</span> <span class="st">'tb_feat'</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">id</span> <span class="op">=</span> <span class="st">'ID'</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>safra_ref <span class="op">=</span> <span class="st">'SAFRA_REF'</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>safra <span class="op">=</span> <span class="st">'SAFRA'</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>feat_num_lista <span class="op">=</span> [<span class="st">'FEAT_NUM1'</span>,<span class="st">'FEAT_NUM2'</span>]</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>lista_janela <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>query_final_num_sqlite <span class="op">=</span> sqlite_create_query_num(tb_publico, tb_feat, lista_janela,feat_num_lista, <span class="bu">id</span>, safra_ref, safra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-20" class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df_num_sqlite <span class="op">=</span> pd.read_sql(query_final_num_sqlite, engine)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df_num_sqlite.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">SAFRA_REF</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_SUM_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_MIN_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_MAX_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_AVG_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_SUM_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_MIN_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_MAX_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_AVG_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_SUM_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_MIN_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_MAX_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_AVG_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_SUM_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_MIN_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_MAX_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_AVG_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_SUM_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_MIN_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_MAX_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_AVG_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_SUM_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_MIN_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_MAX_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_AVG_3M</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>4</td>
+<td>2023-02-01</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>-40</td>
+<td>-40</td>
+<td>-40</td>
+<td>-40.0</td>
+<td>62</td>
+<td>62</td>
+<td>62</td>
+<td>62.0</td>
+<td>-40</td>
+<td>-40</td>
+<td>-40</td>
+<td>-40.0</td>
+<td>62</td>
+<td>62</td>
+<td>62</td>
+<td>62.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>5</td>
+<td>2023-02-01</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td>41.0</td>
+<td>62</td>
+<td>62</td>
+<td>62</td>
+<td>62.0</td>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td>41.0</td>
+<td>62</td>
+<td>62</td>
+<td>62</td>
+<td>62.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>6</td>
+<td>2023-02-01</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>36</td>
+<td>36</td>
+<td>36</td>
+<td>36.0</td>
+<td>63</td>
+<td>63</td>
+<td>63</td>
+<td>63.0</td>
+<td>36</td>
+<td>36</td>
+<td>36</td>
+<td>36.0</td>
+<td>63</td>
+<td>63</td>
+<td>63</td>
+<td>63.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>7</td>
+<td>2023-02-01</td>
+<td>47.0</td>
+<td>47.0</td>
+<td>47.0</td>
+<td>47.0</td>
+<td>44.0</td>
+<td>44.0</td>
+<td>44.0</td>
+<td>44.0</td>
+<td>47</td>
+<td>47</td>
+<td>47</td>
+<td>47.0</td>
+<td>44</td>
+<td>44</td>
+<td>44</td>
+<td>44.0</td>
+<td>47</td>
+<td>47</td>
+<td>47</td>
+<td>47.0</td>
+<td>44</td>
+<td>44</td>
+<td>44</td>
+<td>44.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>10</td>
+<td>2023-02-01</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>29</td>
+<td>29</td>
+<td>29</td>
+<td>29.0</td>
+<td>-7</td>
+<td>-7</td>
+<td>-7</td>
+<td>-7.0</td>
+<td>29</td>
+<td>29</td>
+<td>29</td>
+<td>29.0</td>
+<td>-7</td>
+<td>-7</td>
+<td>-7</td>
+<td>-7.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>Ajustar para não necessariamente criar um dataframe por conta do tamanho</p>
+<div id="cell-22" class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(query_final_num_sqlite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    WITH 
+    tb_public AS (
+        SELECT 
+            *
+        FROM tb_spine
+    ),
+    
+        -- Criação de variáveis de janela de 1M
+        tb_janela_1M as(
+            SELECT 
+                tb_public.ID,
+                tb_public.SAFRA_REF,
+                
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM1 para a janela 1
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_SUM_1M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MIN_1M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MAX_1M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_AVG_1M,
+            
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM2 para a janela 1
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_SUM_1M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MIN_1M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MAX_1M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_AVG_1M
+
+            FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+1 months')) &gt;= tb_public.SAFRA_REF)
+                AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+            GROUP BY tb_public.ID, tb_public.SAFRA_REF
+        ),
+        
+        -- Criação de variáveis de janela de 2M
+        tb_janela_2M as(
+            SELECT 
+                tb_public.ID,
+                tb_public.SAFRA_REF,
+                
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM1 para a janela 2
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_SUM_2M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MIN_2M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MAX_2M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_AVG_2M,
+            
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM2 para a janela 2
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_SUM_2M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MIN_2M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MAX_2M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_AVG_2M
+
+            FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+2 months')) &gt;= tb_public.SAFRA_REF)
+                AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+            GROUP BY tb_public.ID, tb_public.SAFRA_REF
+        ),
+        
+        -- Criação de variáveis de janela de 3M
+        tb_janela_3M as(
+            SELECT 
+                tb_public.ID,
+                tb_public.SAFRA_REF,
+                
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM1 para a janela 3
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_SUM_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MIN_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MAX_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_AVG_3M,
+            
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM2 para a janela 3
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_SUM_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MIN_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MAX_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_AVG_3M
+
+            FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+3 months')) &gt;= tb_public.SAFRA_REF)
+                AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+            GROUP BY tb_public.ID, tb_public.SAFRA_REF
+        ),
+        
+
+    tb_join AS (
+        SELECT 
+            *
+        FROM tb_public 
+        
+        LEFT JOIN tb_janela_1M
+            ON tb_public.ID = tb_janela_1M.ID
+            AND tb_public.SAFRA_REF = tb_janela_1M.SAFRA_REF
+    
+        LEFT JOIN tb_janela_2M
+            ON tb_public.ID = tb_janela_2M.ID
+            AND tb_public.SAFRA_REF = tb_janela_2M.SAFRA_REF
+    
+        LEFT JOIN tb_janela_3M
+            ON tb_public.ID = tb_janela_3M.ID
+            AND tb_public.SAFRA_REF = tb_janela_3M.SAFRA_REF
+    
+    )
+        
+    SELECT 
+        tb_join.ID,
+        tb_join.SAFRA_REF,
+        
+            tb_join.FEAT_NUM1_SUM_1M,
+            tb_join.FEAT_NUM1_MIN_1M,
+            tb_join.FEAT_NUM1_MAX_1M,
+            tb_join.FEAT_NUM1_AVG_1M,
+            
+            tb_join.FEAT_NUM2_SUM_1M,
+            tb_join.FEAT_NUM2_MIN_1M,
+            tb_join.FEAT_NUM2_MAX_1M,
+            tb_join.FEAT_NUM2_AVG_1M,
+            
+            tb_join.FEAT_NUM1_SUM_2M,
+            tb_join.FEAT_NUM1_MIN_2M,
+            tb_join.FEAT_NUM1_MAX_2M,
+            tb_join.FEAT_NUM1_AVG_2M,
+            
+            tb_join.FEAT_NUM2_SUM_2M,
+            tb_join.FEAT_NUM2_MIN_2M,
+            tb_join.FEAT_NUM2_MAX_2M,
+            tb_join.FEAT_NUM2_AVG_2M,
+            
+            tb_join.FEAT_NUM1_SUM_3M,
+            tb_join.FEAT_NUM1_MIN_3M,
+            tb_join.FEAT_NUM1_MAX_3M,
+            tb_join.FEAT_NUM1_AVG_3M,
+            
+            tb_join.FEAT_NUM2_SUM_3M,
+            tb_join.FEAT_NUM2_MIN_3M,
+            tb_join.FEAT_NUM2_MAX_3M,
+            tb_join.FEAT_NUM2_AVG_3M
+    FROM tb_join
+    </code></pre>
+</div>
+</div>
+</section>
+<section id="criação-de-variáveis-categóricas" class="level3">
+<h3 class="anchored" data-anchor-id="criação-de-variáveis-categóricas">Criação de variáveis categóricas</h3>
+<p>A função sqlite_create_query_cat() cria um texto com a query para a criação de variáveis com a moda de cada uma das variáveis listadas em feat_num_lista na janela de tempo fornecida em lista_janela.</p>
+<div id="cell-25" class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tb_publico <span class="op">=</span> <span class="st">'tb_spine'</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>tb_feat <span class="op">=</span> <span class="st">'tb_feat'</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">id</span> <span class="op">=</span> <span class="st">'ID'</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>safra_ref <span class="op">=</span> <span class="st">'SAFRA_REF'</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>safra <span class="op">=</span> <span class="st">'SAFRA'</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>feat_num_lista <span class="op">=</span> [<span class="st">'FEAT_CAT1'</span>, <span class="st">'FEAT_CAT2'</span>]</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>lista_janela <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">6</span>]</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>query_final_cat_sqlite <span class="op">=</span> sqlite_create_query_cat(tb_publico, tb_feat, lista_janela,feat_num_lista, <span class="bu">id</span>, safra_ref, safra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-26" class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df_cat_sqlite_sqlite <span class="op">=</span> pd.read_sql(query_final_cat_sqlite, engine)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>df_cat_sqlite_sqlite.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">SAFRA_REF</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT1_MODA_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT2_MODA_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT1_MODA_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT2_MODA_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT1_MODA_6M</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT2_MODA_6M</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>4</td>
+<td>2023-02-01</td>
+<td>B</td>
+<td>C</td>
+<td>B</td>
+<td>C</td>
+<td>B</td>
+<td>C</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>5</td>
+<td>2023-02-01</td>
+<td>B</td>
+<td>B</td>
+<td>B</td>
+<td>B</td>
+<td>B</td>
+<td>B</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>6</td>
+<td>2023-02-01</td>
+<td>A</td>
+<td>A</td>
+<td>A</td>
+<td>A</td>
+<td>A</td>
+<td>A</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>7</td>
+<td>2023-02-01</td>
+<td>C</td>
+<td>B</td>
+<td>C</td>
+<td>B</td>
+<td>C</td>
+<td>B</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>10</td>
+<td>2023-02-01</td>
+<td>A</td>
+<td>B</td>
+<td>A</td>
+<td>B</td>
+<td>A</td>
+<td>B</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div id="cell-27" class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(query_final_cat_sqlite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    WITH 
+    tb_public as (
+        SELECT 
+            ID,
+            SAFRA_REF
+        FROM tb_spine
+    ),
+    
+    tb_janela_FEAT_CAT1_1M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            tb_feat.FEAT_CAT1,
+            COUNT(*) AS frequency_FEAT_CAT1
+        FROM tb_public
+        LEFT JOIN tb_feat
+        ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+1 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF, tb_feat.FEAT_CAT1
+    ),
+
+    tb_row_FEAT_CAT1_1M as (
+        SELECT 
+            *,    
+            ROW_NUMBER() OVER (
+                PARTITION BY 
+                    ID,
+                    SAFRA_REF        
+                    ORDER BY frequency_FEAT_CAT1 DESC
+            ) as row_num_FEAT_CAT1_1M
+        FROM tb_janela_FEAT_CAT1_1M
+    ),
+    
+    tb_moda_FEAT_CAT1_1M AS(
+        SELECT
+            tb_row_FEAT_CAT1_1M .ID,
+            tb_row_FEAT_CAT1_1M .SAFRA_REF,
+            tb_row_FEAT_CAT1_1M.FEAT_CAT1 AS FEAT_CAT1_MODA_1M
+        FROM tb_row_FEAT_CAT1_1M 
+        WHERE row_num_FEAT_CAT1_1M = 1
+    ),
+
+    tb_janela_FEAT_CAT2_1M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            tb_feat.FEAT_CAT2,
+            COUNT(*) AS frequency_FEAT_CAT2
+        FROM tb_public
+        LEFT JOIN tb_feat
+        ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+1 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF, tb_feat.FEAT_CAT2
+    ),
+
+    tb_row_FEAT_CAT2_1M as (
+        SELECT 
+            *,    
+            ROW_NUMBER() OVER (
+                PARTITION BY 
+                    ID,
+                    SAFRA_REF        
+                    ORDER BY frequency_FEAT_CAT2 DESC
+            ) as row_num_FEAT_CAT2_1M
+        FROM tb_janela_FEAT_CAT2_1M
+    ),
+    
+    tb_moda_FEAT_CAT2_1M AS(
+        SELECT
+            tb_row_FEAT_CAT2_1M .ID,
+            tb_row_FEAT_CAT2_1M .SAFRA_REF,
+            tb_row_FEAT_CAT2_1M.FEAT_CAT2 AS FEAT_CAT2_MODA_1M
+        FROM tb_row_FEAT_CAT2_1M 
+        WHERE row_num_FEAT_CAT2_1M = 1
+    ),
+
+    tb_janela_FEAT_CAT1_3M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            tb_feat.FEAT_CAT1,
+            COUNT(*) AS frequency_FEAT_CAT1
+        FROM tb_public
+        LEFT JOIN tb_feat
+        ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+3 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF, tb_feat.FEAT_CAT1
+    ),
+
+    tb_row_FEAT_CAT1_3M as (
+        SELECT 
+            *,    
+            ROW_NUMBER() OVER (
+                PARTITION BY 
+                    ID,
+                    SAFRA_REF        
+                    ORDER BY frequency_FEAT_CAT1 DESC
+            ) as row_num_FEAT_CAT1_3M
+        FROM tb_janela_FEAT_CAT1_3M
+    ),
+    
+    tb_moda_FEAT_CAT1_3M AS(
+        SELECT
+            tb_row_FEAT_CAT1_3M .ID,
+            tb_row_FEAT_CAT1_3M .SAFRA_REF,
+            tb_row_FEAT_CAT1_3M.FEAT_CAT1 AS FEAT_CAT1_MODA_3M
+        FROM tb_row_FEAT_CAT1_3M 
+        WHERE row_num_FEAT_CAT1_3M = 1
+    ),
+
+    tb_janela_FEAT_CAT2_3M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            tb_feat.FEAT_CAT2,
+            COUNT(*) AS frequency_FEAT_CAT2
+        FROM tb_public
+        LEFT JOIN tb_feat
+        ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+3 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF, tb_feat.FEAT_CAT2
+    ),
+
+    tb_row_FEAT_CAT2_3M as (
+        SELECT 
+            *,    
+            ROW_NUMBER() OVER (
+                PARTITION BY 
+                    ID,
+                    SAFRA_REF        
+                    ORDER BY frequency_FEAT_CAT2 DESC
+            ) as row_num_FEAT_CAT2_3M
+        FROM tb_janela_FEAT_CAT2_3M
+    ),
+    
+    tb_moda_FEAT_CAT2_3M AS(
+        SELECT
+            tb_row_FEAT_CAT2_3M .ID,
+            tb_row_FEAT_CAT2_3M .SAFRA_REF,
+            tb_row_FEAT_CAT2_3M.FEAT_CAT2 AS FEAT_CAT2_MODA_3M
+        FROM tb_row_FEAT_CAT2_3M 
+        WHERE row_num_FEAT_CAT2_3M = 1
+    ),
+
+    tb_janela_FEAT_CAT1_6M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            tb_feat.FEAT_CAT1,
+            COUNT(*) AS frequency_FEAT_CAT1
+        FROM tb_public
+        LEFT JOIN tb_feat
+        ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+6 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF, tb_feat.FEAT_CAT1
+    ),
+
+    tb_row_FEAT_CAT1_6M as (
+        SELECT 
+            *,    
+            ROW_NUMBER() OVER (
+                PARTITION BY 
+                    ID,
+                    SAFRA_REF        
+                    ORDER BY frequency_FEAT_CAT1 DESC
+            ) as row_num_FEAT_CAT1_6M
+        FROM tb_janela_FEAT_CAT1_6M
+    ),
+    
+    tb_moda_FEAT_CAT1_6M AS(
+        SELECT
+            tb_row_FEAT_CAT1_6M .ID,
+            tb_row_FEAT_CAT1_6M .SAFRA_REF,
+            tb_row_FEAT_CAT1_6M.FEAT_CAT1 AS FEAT_CAT1_MODA_6M
+        FROM tb_row_FEAT_CAT1_6M 
+        WHERE row_num_FEAT_CAT1_6M = 1
+    ),
+
+    tb_janela_FEAT_CAT2_6M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            tb_feat.FEAT_CAT2,
+            COUNT(*) AS frequency_FEAT_CAT2
+        FROM tb_public
+        LEFT JOIN tb_feat
+        ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+6 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF, tb_feat.FEAT_CAT2
+    ),
+
+    tb_row_FEAT_CAT2_6M as (
+        SELECT 
+            *,    
+            ROW_NUMBER() OVER (
+                PARTITION BY 
+                    ID,
+                    SAFRA_REF        
+                    ORDER BY frequency_FEAT_CAT2 DESC
+            ) as row_num_FEAT_CAT2_6M
+        FROM tb_janela_FEAT_CAT2_6M
+    ),
+    
+    tb_moda_FEAT_CAT2_6M AS(
+        SELECT
+            tb_row_FEAT_CAT2_6M .ID,
+            tb_row_FEAT_CAT2_6M .SAFRA_REF,
+            tb_row_FEAT_CAT2_6M.FEAT_CAT2 AS FEAT_CAT2_MODA_6M
+        FROM tb_row_FEAT_CAT2_6M 
+        WHERE row_num_FEAT_CAT2_6M = 1
+    )
+
+    SELECT 
+        tb_public.ID,
+        tb_public.SAFRA_REF,
+        
+        tb_moda_FEAT_CAT1_1M.FEAT_CAT1_MODA_1M,
+                 
+        tb_moda_FEAT_CAT2_1M.FEAT_CAT2_MODA_1M,
+                 
+        tb_moda_FEAT_CAT1_3M.FEAT_CAT1_MODA_3M,
+                 
+        tb_moda_FEAT_CAT2_3M.FEAT_CAT2_MODA_3M,
+                 
+        tb_moda_FEAT_CAT1_6M.FEAT_CAT1_MODA_6M,
+                 
+        tb_moda_FEAT_CAT2_6M.FEAT_CAT2_MODA_6M
+    FROM tb_public
+    
+    LEFT JOIN tb_moda_FEAT_CAT1_1M 
+    ON tb_moda_FEAT_CAT1_1M.ID = tb_public.ID
+    AND tb_moda_FEAT_CAT1_1M.SAFRA_REF = tb_public.SAFRA_REF
+
+    LEFT JOIN tb_moda_FEAT_CAT2_1M 
+    ON tb_moda_FEAT_CAT2_1M.ID = tb_public.ID
+    AND tb_moda_FEAT_CAT2_1M.SAFRA_REF = tb_public.SAFRA_REF
+
+    LEFT JOIN tb_moda_FEAT_CAT1_3M 
+    ON tb_moda_FEAT_CAT1_3M.ID = tb_public.ID
+    AND tb_moda_FEAT_CAT1_3M.SAFRA_REF = tb_public.SAFRA_REF
+
+    LEFT JOIN tb_moda_FEAT_CAT2_3M 
+    ON tb_moda_FEAT_CAT2_3M.ID = tb_public.ID
+    AND tb_moda_FEAT_CAT2_3M.SAFRA_REF = tb_public.SAFRA_REF
+
+    LEFT JOIN tb_moda_FEAT_CAT1_6M 
+    ON tb_moda_FEAT_CAT1_6M.ID = tb_public.ID
+    AND tb_moda_FEAT_CAT1_6M.SAFRA_REF = tb_public.SAFRA_REF
+
+    LEFT JOIN tb_moda_FEAT_CAT2_6M 
+    ON tb_moda_FEAT_CAT2_6M.ID = tb_public.ID
+    AND tb_moda_FEAT_CAT2_6M.SAFRA_REF = tb_public.SAFRA_REF
+
+    </code></pre>
+</div>
+</div>
+</section>
+<section id="criação-de-variáveis-agragadas" class="level3">
+<h3 class="anchored" data-anchor-id="criação-de-variáveis-agragadas">Criação de variáveis agragadas</h3>
+<div id="cell-29" class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>tb_publico <span class="op">=</span> <span class="st">'tb_spine'</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>lista_janela <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">6</span>]</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>lista_feat_num <span class="op">=</span> [<span class="st">'FEAT_NUM1'</span>, <span class="st">'FEAT_NUM2'</span>]</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>feat_cat <span class="op">=</span> <span class="st">'FEAT_CAT1'</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>lista_valor_agregador <span class="op">=</span> [<span class="st">'A'</span>, <span class="st">'B'</span>]</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="bu">id</span> <span class="op">=</span> <span class="st">'ID'</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>safra_ref <span class="op">=</span> <span class="st">'SAFRA_REF'</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>tb_feat <span class="op">=</span> <span class="st">'tb_feat'</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>safra <span class="op">=</span> <span class="st">'SAFRA'</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> sqlite_create_query_agregada(tb_publico, tb_feat, lista_janela, lista_feat_num, <span class="bu">id</span>, safra_ref, safra, feat_cat, lista_valor_agregador)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-30" class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(query)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+        WITH
+        tb_public as(
+        SELECT
+            ID,
+            SAFRA_REF
+        FROM tb_spine
+        ),
+    
+            
+    tb_agrupada_FEAT_CAT1_A_3M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_A_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_A_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_A_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_A_3M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_A_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_A_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_A_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_A_3M
+        FROM tb_public
+        INNER JOIN tb_feat
+            ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+3 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+            AND tb_feat.FEAT_CAT1 = 'A'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+        
+            
+    tb_agrupada_FEAT_CAT1_A_6M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_A_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_A_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_A_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_A_6M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_A_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_A_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_A_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_A_6M
+        FROM tb_public
+        INNER JOIN tb_feat
+            ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+6 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+            AND tb_feat.FEAT_CAT1 = 'A'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+        
+            
+    tb_agrupada_FEAT_CAT1_B_3M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_B_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_B_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_B_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_B_3M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_B_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_B_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_B_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_B_3M
+        FROM tb_public
+        INNER JOIN tb_feat
+            ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+3 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+            AND tb_feat.FEAT_CAT1 = 'B'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+        
+            
+    tb_agrupada_FEAT_CAT1_B_6M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_B_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_B_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_B_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_B_6M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_B_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_B_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_B_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_B_6M
+        FROM tb_public
+        INNER JOIN tb_feat
+            ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+6 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+            AND tb_feat.FEAT_CAT1 = 'B'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+         
+            tb_join AS (
+                SELECT 
+                    *        
+                FROM tb_public 
+                
+            LEFT JOIN tb_agrupada_FEAT_CAT1_A_3M
+                ON tb_public.ID = tb_agrupada_FEAT_CAT1_A_3M.ID
+                AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_A_3M.SAFRA_REF
+        
+            LEFT JOIN tb_agrupada_FEAT_CAT1_A_6M
+                ON tb_public.ID = tb_agrupada_FEAT_CAT1_A_6M.ID
+                AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_A_6M.SAFRA_REF
+        
+            LEFT JOIN tb_agrupada_FEAT_CAT1_B_3M
+                ON tb_public.ID = tb_agrupada_FEAT_CAT1_B_3M.ID
+                AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_B_3M.SAFRA_REF
+        
+            LEFT JOIN tb_agrupada_FEAT_CAT1_B_6M
+                ON tb_public.ID = tb_agrupada_FEAT_CAT1_B_6M.ID
+                AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_B_6M.SAFRA_REF
+        
+            )
+
+        SELECT 
+            tb_join.ID,
+            tb_join.SAFRA_REF,
+            
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT1_A_3M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT1_A_3M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT1_A_3M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT1_A_3M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT1_A_3M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT1_A_3M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT1_A_3M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT1_A_3M,
+
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT1_A_6M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT1_A_6M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT1_A_6M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT1_A_6M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT1_A_6M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT1_A_6M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT1_A_6M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT1_A_6M,
+
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT1_B_3M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT1_B_3M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT1_B_3M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT1_B_3M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT1_B_3M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT1_B_3M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT1_B_3M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT1_B_3M,
+
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT1_B_6M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT1_B_6M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT1_B_6M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT1_B_6M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT1_B_6M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT1_B_6M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT1_B_6M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT1_B_6M
+        FROM tb_join
+    </code></pre>
+</div>
+</div>
+<div id="cell-31" class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df_sqlite_agregada <span class="op">=</span> pd.read_sql(query, engine)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>df_sqlite_agregada.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">SAFRA_REF</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT1_B_6M</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>4</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>5</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>6</td>
+<td>2023-02-01</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>7</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>10</td>
+<td>2023-02-01</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div id="cell-32" class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>tb_publico <span class="op">=</span> <span class="st">'tb_spine'</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>lista_janela <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">6</span>]</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>lista_feat_num <span class="op">=</span> [<span class="st">'FEAT_NUM1'</span>, <span class="st">'FEAT_NUM2'</span>]</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>feat_cat <span class="op">=</span> <span class="st">'FEAT_CAT1'</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>lista_valor_agragador <span class="op">=</span> [<span class="st">'A'</span>, <span class="st">'B'</span>]</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="bu">id</span> <span class="op">=</span> <span class="st">'ID'</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>safra_ref <span class="op">=</span> <span class="st">'SAFRA_REF'</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>tb_feat <span class="op">=</span> <span class="st">'tb_feat'</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>safra <span class="op">=</span> <span class="st">'SAFRA'</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> sqlite_create_query_agregada(tb_publico, tb_feat, lista_janela, lista_feat_num, <span class="bu">id</span>, safra_ref, safra, feat_cat, lista_valor_agragador)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-33" class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(query)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+        WITH
+        tb_public as(
+        SELECT
+            ID,
+            SAFRA_REF
+        FROM tb_spine
+        ),
+    
+            
+    tb_agrupada_FEAT_CAT1_A_3M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_A_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_A_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_A_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_A_3M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_A_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_A_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_A_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_A_3M
+        FROM tb_public
+        INNER JOIN tb_feat
+            ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+3 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+            AND tb_feat.FEAT_CAT1 = 'A'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+        
+            
+    tb_agrupada_FEAT_CAT1_A_6M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_A_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_A_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_A_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_A_6M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_A_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_A_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_A_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_A_6M
+        FROM tb_public
+        INNER JOIN tb_feat
+            ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+6 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+            AND tb_feat.FEAT_CAT1 = 'A'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+        
+            
+    tb_agrupada_FEAT_CAT1_B_3M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_B_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_B_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_B_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_B_3M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_B_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_B_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_B_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_B_3M
+        FROM tb_public
+        INNER JOIN tb_feat
+            ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+3 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+            AND tb_feat.FEAT_CAT1 = 'B'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+        
+            
+    tb_agrupada_FEAT_CAT1_B_6M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_B_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_B_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_B_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_B_6M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_B_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_B_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_B_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_B_6M
+        FROM tb_public
+        INNER JOIN tb_feat
+            ON tb_public.ID = tb_feat.ID
+            AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+6 months')) &gt;= tb_public.SAFRA_REF)
+            AND (tb_feat.SAFRA &lt; tb_public.SAFRA_REF)
+            AND tb_feat.FEAT_CAT1 = 'B'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+         
+            tb_join AS (
+                SELECT 
+                    *        
+                FROM tb_public 
+                
+            LEFT JOIN tb_agrupada_FEAT_CAT1_A_3M
+                ON tb_public.ID = tb_agrupada_FEAT_CAT1_A_3M.ID
+                AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_A_3M.SAFRA_REF
+        
+            LEFT JOIN tb_agrupada_FEAT_CAT1_A_6M
+                ON tb_public.ID = tb_agrupada_FEAT_CAT1_A_6M.ID
+                AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_A_6M.SAFRA_REF
+        
+            LEFT JOIN tb_agrupada_FEAT_CAT1_B_3M
+                ON tb_public.ID = tb_agrupada_FEAT_CAT1_B_3M.ID
+                AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_B_3M.SAFRA_REF
+        
+            LEFT JOIN tb_agrupada_FEAT_CAT1_B_6M
+                ON tb_public.ID = tb_agrupada_FEAT_CAT1_B_6M.ID
+                AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_B_6M.SAFRA_REF
+        
+            )
+
+        SELECT 
+            tb_join.ID,
+            tb_join.SAFRA_REF,
+            
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT1_A_3M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT1_A_3M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT1_A_3M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT1_A_3M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT1_A_3M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT1_A_3M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT1_A_3M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT1_A_3M,
+
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT1_A_6M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT1_A_6M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT1_A_6M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT1_A_6M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT1_A_6M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT1_A_6M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT1_A_6M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT1_A_6M,
+
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT1_B_3M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT1_B_3M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT1_B_3M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT1_B_3M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT1_B_3M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT1_B_3M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT1_B_3M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT1_B_3M,
+
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT1_B_6M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT1_B_6M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT1_B_6M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT1_B_6M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT1_B_6M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT1_B_6M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT1_B_6M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT1_B_6M
+        FROM tb_join
+    </code></pre>
+</div>
+</div>
+<div id="cell-34" class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>df_sqlite_agregada <span class="op">=</span> pd.read_sql(query, engine)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>df_sqlite_agregada.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">SAFRA_REF</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT1_B_6M</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>4</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>-40.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>5</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>41.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+<td>62.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>6</td>
+<td>2023-02-01</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>36.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>63.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>7</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>10</td>
+<td>2023-02-01</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>29.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>-7.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="mysql" class="level2">
+<h2 class="anchored" data-anchor-id="mysql">2. MySQL</h2>
+<section id="configurando-conexão" class="level3">
+<h3 class="anchored" data-anchor-id="configurando-conexão">Configurando conexão</h3>
+<div id="cell-37" class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>host <span class="op">=</span> <span class="st">"localhost"</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>user <span class="op">=</span> <span class="st">"sqluser"</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>password <span class="op">=</span> <span class="st">"password"</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>database <span class="op">=</span> <span class="st">"mydatabase"</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Conectar ao MySQL</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>connection <span class="op">=</span> mysql.connector.<span class="ex">connect</span>(</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span>host,</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    user<span class="op">=</span>user,</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    password<span class="op">=</span>password,</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    database<span class="op">=</span>database</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visão-inicial-do-público-1" class="level3">
+<h3 class="anchored" data-anchor-id="visão-inicial-do-público-1">Visão inicial do público</h3>
+<div id="cell-39" class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>df_spine <span class="op">=</span> pd.read_sql(<span class="st">"SELECT * FROM tb_spine"</span>, connection)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>df_spine.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_4407/661881290.py:3: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  df_spine = pd.read_sql("SELECT * FROM tb_spine", connection)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">SAFRA_REF</th>
+<th data-quarto-table-cell-role="th">Target</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>4</td>
+<td>2023-02-01</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>5</td>
+<td>2023-02-01</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>6</td>
+<td>2023-02-01</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>7</td>
+<td>2023-02-01</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>10</td>
+<td>2023-02-01</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="visão-inicial-da-tabela-de-variáveis-1" class="level3">
+<h3 class="anchored" data-anchor-id="visão-inicial-da-tabela-de-variáveis-1">Visão inicial da tabela de variáveis</h3>
+<div id="cell-41" class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>df_data <span class="op">=</span> pd.read_sql(<span class="st">"SELECT * FROM tb_feat"</span>, connection)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>df_data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_4407/1780842963.py:3: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  df_data = pd.read_sql("SELECT * FROM tb_feat", connection)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">SAFRA</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT1</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>1</td>
+<td>2023-01-01</td>
+<td>73</td>
+<td>23</td>
+<td>B</td>
+<td>B</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>3</td>
+<td>2023-01-01</td>
+<td>15</td>
+<td>1</td>
+<td>B</td>
+<td>B</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>5</td>
+<td>2023-01-01</td>
+<td>75</td>
+<td>71</td>
+<td>A</td>
+<td>A</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>7</td>
+<td>2023-01-01</td>
+<td>73</td>
+<td>82</td>
+<td>B</td>
+<td>C</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>9</td>
+<td>2023-01-01</td>
+<td>61</td>
+<td>8</td>
+<td>C</td>
+<td>B</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="criação-de-variáveis-numéricas-1" class="level3">
+<h3 class="anchored" data-anchor-id="criação-de-variáveis-numéricas-1">Criação de variáveis numéricas</h3>
+<p>A função mysql_create_query_num() cria um texto com a query para a criação de variáveis com as operações soma, mínimo, máximo e média das variáveis listadas em feat_num_lista e com a janela de tempo listada em lista_janela.</p>
+<div id="cell-44" class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>tb_publico <span class="op">=</span> <span class="st">'tb_spine'</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>tb_feat <span class="op">=</span> <span class="st">'tb_feat'</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="bu">id</span> <span class="op">=</span> <span class="st">'ID'</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>safra_ref <span class="op">=</span> <span class="st">'SAFRA_REF'</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>safra <span class="op">=</span> <span class="st">'SAFRA'</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>feat_num_lista <span class="op">=</span> [<span class="st">'FEAT_NUM1'</span>,<span class="st">'FEAT_NUM2'</span>]</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>lista_janela <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>query_final_num_mysql <span class="op">=</span> mysql_create_query_num(tb_publico, tb_feat, lista_janela,feat_num_lista, <span class="bu">id</span>, safra_ref, safra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-45" class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>df_num_mysql <span class="op">=</span> pd.read_sql(query_final_num_mysql, connection)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>df_num_mysql.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_4407/2119439562.py:3: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  df_num_mysql = pd.read_sql(query_final_num_mysql, connection)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">SAFRA_REF</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_SUM_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_MIN_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_MAX_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_AVG_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_SUM_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_MIN_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_MAX_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_AVG_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_SUM_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_MIN_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_MAX_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_AVG_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_SUM_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_MIN_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_MAX_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_AVG_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_SUM_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_MIN_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_MAX_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM1_AVG_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_SUM_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_MIN_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_MAX_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_NUM2_AVG_3M</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>4</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>5</td>
+<td>2023-02-01</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>71.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>6</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>7</td>
+<td>2023-02-01</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>10</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div id="cell-46" class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(query_final_num_mysql)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    WITH 
+    tb_public AS (
+        SELECT 
+            *
+        FROM tb_spine
+    ),
+    
+        -- Criação de variáveis de janela de 1M
+        tb_janela_1M AS (
+            SELECT 
+                tb_public.ID,
+                tb_public.SAFRA_REF,
+                
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM1 para a janela 1
+            SUM(IFNULL(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_SUM_1M,
+            MIN(IFNULL(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MIN_1M,
+            MAX(IFNULL(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MAX_1M,
+            AVG(IFNULL(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_AVG_1M,
+            
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM2 para a janela 1
+            SUM(IFNULL(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_SUM_1M,
+            MIN(IFNULL(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MIN_1M,
+            MAX(IFNULL(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MAX_1M,
+            AVG(IFNULL(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_AVG_1M
+            FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 1 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+            GROUP BY tb_public.ID, tb_public.SAFRA_REF
+        ),
+        
+        -- Criação de variáveis de janela de 2M
+        tb_janela_2M AS (
+            SELECT 
+                tb_public.ID,
+                tb_public.SAFRA_REF,
+                
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM1 para a janela 2
+            SUM(IFNULL(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_SUM_2M,
+            MIN(IFNULL(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MIN_2M,
+            MAX(IFNULL(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MAX_2M,
+            AVG(IFNULL(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_AVG_2M,
+            
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM2 para a janela 2
+            SUM(IFNULL(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_SUM_2M,
+            MIN(IFNULL(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MIN_2M,
+            MAX(IFNULL(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MAX_2M,
+            AVG(IFNULL(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_AVG_2M
+            FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 2 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+            GROUP BY tb_public.ID, tb_public.SAFRA_REF
+        ),
+        
+        -- Criação de variáveis de janela de 3M
+        tb_janela_3M AS (
+            SELECT 
+                tb_public.ID,
+                tb_public.SAFRA_REF,
+                
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM1 para a janela 3
+            SUM(IFNULL(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_SUM_3M,
+            MIN(IFNULL(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MIN_3M,
+            MAX(IFNULL(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MAX_3M,
+            AVG(IFNULL(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_AVG_3M,
+            
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM2 para a janela 3
+            SUM(IFNULL(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_SUM_3M,
+            MIN(IFNULL(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MIN_3M,
+            MAX(IFNULL(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MAX_3M,
+            AVG(IFNULL(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_AVG_3M
+            FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 3 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+            GROUP BY tb_public.ID, tb_public.SAFRA_REF
+        ),
+        
+
+    tb_join AS (
+        SELECT 
+            tb_public.*,
+            
+            tb_janela_1M.FEAT_NUM1_SUM_1M,
+            tb_janela_1M.FEAT_NUM1_MIN_1M,
+            tb_janela_1M.FEAT_NUM1_MAX_1M,
+            tb_janela_1M.FEAT_NUM1_AVG_1M,
+            
+            tb_janela_1M.FEAT_NUM2_SUM_1M,
+            tb_janela_1M.FEAT_NUM2_MIN_1M,
+            tb_janela_1M.FEAT_NUM2_MAX_1M,
+            tb_janela_1M.FEAT_NUM2_AVG_1M,
+            
+            tb_janela_2M.FEAT_NUM1_SUM_2M,
+            tb_janela_2M.FEAT_NUM1_MIN_2M,
+            tb_janela_2M.FEAT_NUM1_MAX_2M,
+            tb_janela_2M.FEAT_NUM1_AVG_2M,
+            
+            tb_janela_2M.FEAT_NUM2_SUM_2M,
+            tb_janela_2M.FEAT_NUM2_MIN_2M,
+            tb_janela_2M.FEAT_NUM2_MAX_2M,
+            tb_janela_2M.FEAT_NUM2_AVG_2M,
+            
+            tb_janela_3M.FEAT_NUM1_SUM_3M,
+            tb_janela_3M.FEAT_NUM1_MIN_3M,
+            tb_janela_3M.FEAT_NUM1_MAX_3M,
+            tb_janela_3M.FEAT_NUM1_AVG_3M,
+            
+            tb_janela_3M.FEAT_NUM2_SUM_3M,
+            tb_janela_3M.FEAT_NUM2_MIN_3M,
+            tb_janela_3M.FEAT_NUM2_MAX_3M,
+            tb_janela_3M.FEAT_NUM2_AVG_3M
+
+        FROM tb_public 
+        
+        LEFT JOIN tb_janela_1M
+            ON tb_public.ID = tb_janela_1M.ID
+            AND tb_public.SAFRA_REF = tb_janela_1M.SAFRA_REF
+    
+        LEFT JOIN tb_janela_2M
+            ON tb_public.ID = tb_janela_2M.ID
+            AND tb_public.SAFRA_REF = tb_janela_2M.SAFRA_REF
+    
+        LEFT JOIN tb_janela_3M
+            ON tb_public.ID = tb_janela_3M.ID
+            AND tb_public.SAFRA_REF = tb_janela_3M.SAFRA_REF
+    
+    )
+        
+    SELECT 
+        tb_join.ID,
+        tb_join.SAFRA_REF,
+        
+            tb_join.FEAT_NUM1_SUM_1M,
+            tb_join.FEAT_NUM1_MIN_1M,
+            tb_join.FEAT_NUM1_MAX_1M,
+            tb_join.FEAT_NUM1_AVG_1M,
+            
+            tb_join.FEAT_NUM2_SUM_1M,
+            tb_join.FEAT_NUM2_MIN_1M,
+            tb_join.FEAT_NUM2_MAX_1M,
+            tb_join.FEAT_NUM2_AVG_1M,
+            
+            tb_join.FEAT_NUM1_SUM_2M,
+            tb_join.FEAT_NUM1_MIN_2M,
+            tb_join.FEAT_NUM1_MAX_2M,
+            tb_join.FEAT_NUM1_AVG_2M,
+            
+            tb_join.FEAT_NUM2_SUM_2M,
+            tb_join.FEAT_NUM2_MIN_2M,
+            tb_join.FEAT_NUM2_MAX_2M,
+            tb_join.FEAT_NUM2_AVG_2M,
+            
+            tb_join.FEAT_NUM1_SUM_3M,
+            tb_join.FEAT_NUM1_MIN_3M,
+            tb_join.FEAT_NUM1_MAX_3M,
+            tb_join.FEAT_NUM1_AVG_3M,
+            
+            tb_join.FEAT_NUM2_SUM_3M,
+            tb_join.FEAT_NUM2_MIN_3M,
+            tb_join.FEAT_NUM2_MAX_3M,
+            tb_join.FEAT_NUM2_AVG_3M
+    FROM tb_join
+    </code></pre>
+</div>
+</div>
+</section>
+<section id="criação-de-variáveis-categóricas-1" class="level3">
+<h3 class="anchored" data-anchor-id="criação-de-variáveis-categóricas-1">Criação de variáveis categóricas</h3>
+<p>A função mysql_create_query_cat() cria um texto com a query para a criação de variáveis com a moda de cada uma das variáveis listadas em feat_num_lista na janela de tempo fornecida em lista_janela.</p>
+<div id="cell-49" class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>tb_publico <span class="op">=</span> <span class="st">'tb_spine'</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>tb_feat <span class="op">=</span> <span class="st">'tb_feat'</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="bu">id</span> <span class="op">=</span> <span class="st">'ID'</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>safra_ref <span class="op">=</span> <span class="st">'SAFRA_REF'</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>safra <span class="op">=</span> <span class="st">'SAFRA'</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>feat_num_lista <span class="op">=</span> [<span class="st">'FEAT_CAT1'</span>,<span class="st">'FEAT_CAT2'</span>]</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>lista_janela <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>query_final_cat_mysql <span class="op">=</span> mysql_create_query_cat(tb_publico, tb_feat, lista_janela, feat_num_lista, <span class="bu">id</span>, safra_ref, safra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-50" class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>df_cat_sqlite_mysql <span class="op">=</span> pd.read_sql(query_final_cat_mysql, connection)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>df_cat_sqlite_mysql.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_4407/3114069227.py:3: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  df_cat_sqlite_mysql = pd.read_sql(query_final_cat_mysql, connection)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">SAFRA_REF</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT1_MODA_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT2_MODA_1M</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT1_MODA_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT2_MODA_2M</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT1_MODA_3M</th>
+<th data-quarto-table-cell-role="th">FEAT_CAT2_MODA_3M</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>4</td>
+<td>2023-02-01</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>5</td>
+<td>2023-02-01</td>
+<td>A</td>
+<td>A</td>
+<td>A</td>
+<td>A</td>
+<td>A</td>
+<td>A</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>6</td>
+<td>2023-02-01</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>7</td>
+<td>2023-02-01</td>
+<td>B</td>
+<td>C</td>
+<td>B</td>
+<td>C</td>
+<td>B</td>
+<td>C</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>10</td>
+<td>2023-02-01</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div id="cell-51" class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(query_final_cat_mysql)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    WITH 
+    tb_public AS (
+        SELECT 
+            ID,
+            SAFRA_REF
+        FROM tb_spine
+    ),
+    
+    tb_janela_FEAT_CAT1_1M AS (
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            tb_feat.FEAT_CAT1,
+            COUNT(*) AS frequency_FEAT_CAT1
+        FROM tb_public
+        LEFT JOIN tb_feat
+        ON tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 1 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF, tb_feat.FEAT_CAT1
+    ),
+
+    tb_row_FEAT_CAT1_1M AS (
+        SELECT 
+            *,    
+            ROW_NUMBER() OVER (
+                PARTITION BY 
+                    ID,
+                    SAFRA_REF        
+                    ORDER BY frequency_FEAT_CAT1 DESC
+            ) AS row_num_FEAT_CAT1_1M
+        FROM tb_janela_FEAT_CAT1_1M
+    ),
+    
+    tb_moda_FEAT_CAT1_1M AS (
+        SELECT
+            tb_row_FEAT_CAT1_1M.ID,
+            tb_row_FEAT_CAT1_1M.SAFRA_REF,
+            tb_row_FEAT_CAT1_1M.FEAT_CAT1 AS FEAT_CAT1_MODA_1M
+        FROM tb_row_FEAT_CAT1_1M 
+        WHERE row_num_FEAT_CAT1_1M = 1
+    ),
+
+    tb_janela_FEAT_CAT2_1M AS (
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            tb_feat.FEAT_CAT2,
+            COUNT(*) AS frequency_FEAT_CAT2
+        FROM tb_public
+        LEFT JOIN tb_feat
+        ON tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 1 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF, tb_feat.FEAT_CAT2
+    ),
+
+    tb_row_FEAT_CAT2_1M AS (
+        SELECT 
+            *,    
+            ROW_NUMBER() OVER (
+                PARTITION BY 
+                    ID,
+                    SAFRA_REF        
+                    ORDER BY frequency_FEAT_CAT2 DESC
+            ) AS row_num_FEAT_CAT2_1M
+        FROM tb_janela_FEAT_CAT2_1M
+    ),
+    
+    tb_moda_FEAT_CAT2_1M AS (
+        SELECT
+            tb_row_FEAT_CAT2_1M.ID,
+            tb_row_FEAT_CAT2_1M.SAFRA_REF,
+            tb_row_FEAT_CAT2_1M.FEAT_CAT2 AS FEAT_CAT2_MODA_1M
+        FROM tb_row_FEAT_CAT2_1M 
+        WHERE row_num_FEAT_CAT2_1M = 1
+    ),
+
+    tb_janela_FEAT_CAT1_2M AS (
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            tb_feat.FEAT_CAT1,
+            COUNT(*) AS frequency_FEAT_CAT1
+        FROM tb_public
+        LEFT JOIN tb_feat
+        ON tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 2 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF, tb_feat.FEAT_CAT1
+    ),
+
+    tb_row_FEAT_CAT1_2M AS (
+        SELECT 
+            *,    
+            ROW_NUMBER() OVER (
+                PARTITION BY 
+                    ID,
+                    SAFRA_REF        
+                    ORDER BY frequency_FEAT_CAT1 DESC
+            ) AS row_num_FEAT_CAT1_2M
+        FROM tb_janela_FEAT_CAT1_2M
+    ),
+    
+    tb_moda_FEAT_CAT1_2M AS (
+        SELECT
+            tb_row_FEAT_CAT1_2M.ID,
+            tb_row_FEAT_CAT1_2M.SAFRA_REF,
+            tb_row_FEAT_CAT1_2M.FEAT_CAT1 AS FEAT_CAT1_MODA_2M
+        FROM tb_row_FEAT_CAT1_2M 
+        WHERE row_num_FEAT_CAT1_2M = 1
+    ),
+
+    tb_janela_FEAT_CAT2_2M AS (
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            tb_feat.FEAT_CAT2,
+            COUNT(*) AS frequency_FEAT_CAT2
+        FROM tb_public
+        LEFT JOIN tb_feat
+        ON tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 2 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF, tb_feat.FEAT_CAT2
+    ),
+
+    tb_row_FEAT_CAT2_2M AS (
+        SELECT 
+            *,    
+            ROW_NUMBER() OVER (
+                PARTITION BY 
+                    ID,
+                    SAFRA_REF        
+                    ORDER BY frequency_FEAT_CAT2 DESC
+            ) AS row_num_FEAT_CAT2_2M
+        FROM tb_janela_FEAT_CAT2_2M
+    ),
+    
+    tb_moda_FEAT_CAT2_2M AS (
+        SELECT
+            tb_row_FEAT_CAT2_2M.ID,
+            tb_row_FEAT_CAT2_2M.SAFRA_REF,
+            tb_row_FEAT_CAT2_2M.FEAT_CAT2 AS FEAT_CAT2_MODA_2M
+        FROM tb_row_FEAT_CAT2_2M 
+        WHERE row_num_FEAT_CAT2_2M = 1
+    ),
+
+    tb_janela_FEAT_CAT1_3M AS (
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            tb_feat.FEAT_CAT1,
+            COUNT(*) AS frequency_FEAT_CAT1
+        FROM tb_public
+        LEFT JOIN tb_feat
+        ON tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 3 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF, tb_feat.FEAT_CAT1
+    ),
+
+    tb_row_FEAT_CAT1_3M AS (
+        SELECT 
+            *,    
+            ROW_NUMBER() OVER (
+                PARTITION BY 
+                    ID,
+                    SAFRA_REF        
+                    ORDER BY frequency_FEAT_CAT1 DESC
+            ) AS row_num_FEAT_CAT1_3M
+        FROM tb_janela_FEAT_CAT1_3M
+    ),
+    
+    tb_moda_FEAT_CAT1_3M AS (
+        SELECT
+            tb_row_FEAT_CAT1_3M.ID,
+            tb_row_FEAT_CAT1_3M.SAFRA_REF,
+            tb_row_FEAT_CAT1_3M.FEAT_CAT1 AS FEAT_CAT1_MODA_3M
+        FROM tb_row_FEAT_CAT1_3M 
+        WHERE row_num_FEAT_CAT1_3M = 1
+    ),
+
+    tb_janela_FEAT_CAT2_3M AS (
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            tb_feat.FEAT_CAT2,
+            COUNT(*) AS frequency_FEAT_CAT2
+        FROM tb_public
+        LEFT JOIN tb_feat
+        ON tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 3 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF, tb_feat.FEAT_CAT2
+    ),
+
+    tb_row_FEAT_CAT2_3M AS (
+        SELECT 
+            *,    
+            ROW_NUMBER() OVER (
+                PARTITION BY 
+                    ID,
+                    SAFRA_REF        
+                    ORDER BY frequency_FEAT_CAT2 DESC
+            ) AS row_num_FEAT_CAT2_3M
+        FROM tb_janela_FEAT_CAT2_3M
+    ),
+    
+    tb_moda_FEAT_CAT2_3M AS (
+        SELECT
+            tb_row_FEAT_CAT2_3M.ID,
+            tb_row_FEAT_CAT2_3M.SAFRA_REF,
+            tb_row_FEAT_CAT2_3M.FEAT_CAT2 AS FEAT_CAT2_MODA_3M
+        FROM tb_row_FEAT_CAT2_3M 
+        WHERE row_num_FEAT_CAT2_3M = 1
+    )
+
+    SELECT 
+        tb_public.ID,
+        tb_public.SAFRA_REF,
+        
+        tb_moda_FEAT_CAT1_1M.FEAT_CAT1_MODA_1M,
+                 
+        tb_moda_FEAT_CAT2_1M.FEAT_CAT2_MODA_1M,
+                 
+        tb_moda_FEAT_CAT1_2M.FEAT_CAT1_MODA_2M,
+                 
+        tb_moda_FEAT_CAT2_2M.FEAT_CAT2_MODA_2M,
+                 
+        tb_moda_FEAT_CAT1_3M.FEAT_CAT1_MODA_3M,
+                 
+        tb_moda_FEAT_CAT2_3M.FEAT_CAT2_MODA_3M
+    FROM tb_public
+    
+    LEFT JOIN tb_moda_FEAT_CAT1_1M 
+    ON tb_moda_FEAT_CAT1_1M.ID = tb_public.ID
+    AND tb_moda_FEAT_CAT1_1M.SAFRA_REF = tb_public.SAFRA_REF
+
+    LEFT JOIN tb_moda_FEAT_CAT2_1M 
+    ON tb_moda_FEAT_CAT2_1M.ID = tb_public.ID
+    AND tb_moda_FEAT_CAT2_1M.SAFRA_REF = tb_public.SAFRA_REF
+
+    LEFT JOIN tb_moda_FEAT_CAT1_2M 
+    ON tb_moda_FEAT_CAT1_2M.ID = tb_public.ID
+    AND tb_moda_FEAT_CAT1_2M.SAFRA_REF = tb_public.SAFRA_REF
+
+    LEFT JOIN tb_moda_FEAT_CAT2_2M 
+    ON tb_moda_FEAT_CAT2_2M.ID = tb_public.ID
+    AND tb_moda_FEAT_CAT2_2M.SAFRA_REF = tb_public.SAFRA_REF
+
+    LEFT JOIN tb_moda_FEAT_CAT1_3M 
+    ON tb_moda_FEAT_CAT1_3M.ID = tb_public.ID
+    AND tb_moda_FEAT_CAT1_3M.SAFRA_REF = tb_public.SAFRA_REF
+
+    LEFT JOIN tb_moda_FEAT_CAT2_3M 
+    ON tb_moda_FEAT_CAT2_3M.ID = tb_public.ID
+    AND tb_moda_FEAT_CAT2_3M.SAFRA_REF = tb_public.SAFRA_REF
+
+    </code></pre>
+</div>
+</div>
+</section>
+<section id="criação-de-variáveis-agragadas-1" class="level3">
+<h3 class="anchored" data-anchor-id="criação-de-variáveis-agragadas-1">Criação de variáveis agragadas</h3>
+<div id="cell-53" class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>tb_publico <span class="op">=</span> <span class="st">'tb_spine'</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>lista_janela <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">6</span>]</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>lista_feat_num <span class="op">=</span> [<span class="st">'FEAT_NUM1'</span>, <span class="st">'FEAT_NUM2'</span>]</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>feat_cat <span class="op">=</span> <span class="st">'FEAT_CAT1'</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>lista_valor_agragador <span class="op">=</span> [<span class="st">'A'</span>, <span class="st">'B'</span>]</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="bu">id</span> <span class="op">=</span> <span class="st">'ID'</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>safra_ref <span class="op">=</span> <span class="st">'SAFRA_REF'</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>tb_feat <span class="op">=</span> <span class="st">'tb_feat'</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>safra <span class="op">=</span> <span class="st">'SAFRA'</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> mysql_create_query_agregada(tb_publico, tb_feat, lista_janela, lista_feat_num, <span class="bu">id</span>, safra_ref, safra, feat_cat, lista_valor_agragador)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-54" class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(query)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+        WITH
+        tb_public as(
+        SELECT
+            ID,
+            SAFRA_REF
+        FROM tb_spine
+        ),
+    
+            
+    tb_agrupada_FEAT_CAT1_A_3M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_A_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_A_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_A_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_A_3M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_A_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_A_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_A_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_A_3M
+        FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 3 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+            AND tb_feat.FEAT_CAT1 = 'A'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+        
+            
+    tb_agrupada_FEAT_CAT1_A_6M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_A_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_A_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_A_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_A_6M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_A_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_A_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_A_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_A_6M
+        FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 6 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+            AND tb_feat.FEAT_CAT1 = 'A'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+        
+            
+    tb_agrupada_FEAT_CAT1_B_3M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_B_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_B_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_B_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_B_3M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_B_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_B_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_B_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_B_3M
+        FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 3 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+            AND tb_feat.FEAT_CAT1 = 'B'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+        
+            
+    tb_agrupada_FEAT_CAT1_B_6M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_B_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_B_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_B_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_B_6M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_B_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_B_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_B_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_B_6M
+        FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 6 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+            AND tb_feat.FEAT_CAT1 = 'B'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+         
+    tb_join AS (
+        SELECT 
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+                    
+            tb_agrupada_FEAT_CAT1_A_3M.SUM_FEAT_NUM1_FEAT_CAT1_A_3M,
+            tb_agrupada_FEAT_CAT1_A_3M.MAX_FEAT_NUM1_FEAT_CAT1_A_3M,
+            tb_agrupada_FEAT_CAT1_A_3M.MIN_FEAT_NUM1_FEAT_CAT1_A_3M,
+            tb_agrupada_FEAT_CAT1_A_3M.AVG_FEAT_NUM1_FEAT_CAT1_A_3M,
+
+            tb_agrupada_FEAT_CAT1_A_3M.SUM_FEAT_NUM2_FEAT_CAT1_A_3M,
+            tb_agrupada_FEAT_CAT1_A_3M.MAX_FEAT_NUM2_FEAT_CAT1_A_3M,
+            tb_agrupada_FEAT_CAT1_A_3M.MIN_FEAT_NUM2_FEAT_CAT1_A_3M,
+            tb_agrupada_FEAT_CAT1_A_3M.AVG_FEAT_NUM2_FEAT_CAT1_A_3M,
+
+            tb_agrupada_FEAT_CAT1_A_6M.SUM_FEAT_NUM1_FEAT_CAT1_A_6M,
+            tb_agrupada_FEAT_CAT1_A_6M.MAX_FEAT_NUM1_FEAT_CAT1_A_6M,
+            tb_agrupada_FEAT_CAT1_A_6M.MIN_FEAT_NUM1_FEAT_CAT1_A_6M,
+            tb_agrupada_FEAT_CAT1_A_6M.AVG_FEAT_NUM1_FEAT_CAT1_A_6M,
+
+            tb_agrupada_FEAT_CAT1_A_6M.SUM_FEAT_NUM2_FEAT_CAT1_A_6M,
+            tb_agrupada_FEAT_CAT1_A_6M.MAX_FEAT_NUM2_FEAT_CAT1_A_6M,
+            tb_agrupada_FEAT_CAT1_A_6M.MIN_FEAT_NUM2_FEAT_CAT1_A_6M,
+            tb_agrupada_FEAT_CAT1_A_6M.AVG_FEAT_NUM2_FEAT_CAT1_A_6M,
+
+            tb_agrupada_FEAT_CAT1_B_3M.SUM_FEAT_NUM1_FEAT_CAT1_B_3M,
+            tb_agrupada_FEAT_CAT1_B_3M.MAX_FEAT_NUM1_FEAT_CAT1_B_3M,
+            tb_agrupada_FEAT_CAT1_B_3M.MIN_FEAT_NUM1_FEAT_CAT1_B_3M,
+            tb_agrupada_FEAT_CAT1_B_3M.AVG_FEAT_NUM1_FEAT_CAT1_B_3M,
+
+            tb_agrupada_FEAT_CAT1_B_3M.SUM_FEAT_NUM2_FEAT_CAT1_B_3M,
+            tb_agrupada_FEAT_CAT1_B_3M.MAX_FEAT_NUM2_FEAT_CAT1_B_3M,
+            tb_agrupada_FEAT_CAT1_B_3M.MIN_FEAT_NUM2_FEAT_CAT1_B_3M,
+            tb_agrupada_FEAT_CAT1_B_3M.AVG_FEAT_NUM2_FEAT_CAT1_B_3M,
+
+            tb_agrupada_FEAT_CAT1_B_6M.SUM_FEAT_NUM1_FEAT_CAT1_B_6M,
+            tb_agrupada_FEAT_CAT1_B_6M.MAX_FEAT_NUM1_FEAT_CAT1_B_6M,
+            tb_agrupada_FEAT_CAT1_B_6M.MIN_FEAT_NUM1_FEAT_CAT1_B_6M,
+            tb_agrupada_FEAT_CAT1_B_6M.AVG_FEAT_NUM1_FEAT_CAT1_B_6M,
+
+            tb_agrupada_FEAT_CAT1_B_6M.SUM_FEAT_NUM2_FEAT_CAT1_B_6M,
+            tb_agrupada_FEAT_CAT1_B_6M.MAX_FEAT_NUM2_FEAT_CAT1_B_6M,
+            tb_agrupada_FEAT_CAT1_B_6M.MIN_FEAT_NUM2_FEAT_CAT1_B_6M,
+            tb_agrupada_FEAT_CAT1_B_6M.AVG_FEAT_NUM2_FEAT_CAT1_B_6M   
+        FROM tb_public 
+                
+        LEFT JOIN tb_agrupada_FEAT_CAT1_A_3M
+            ON tb_public.ID = tb_agrupada_FEAT_CAT1_A_3M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_A_3M.SAFRA_REF
+        
+        LEFT JOIN tb_agrupada_FEAT_CAT1_A_6M
+            ON tb_public.ID = tb_agrupada_FEAT_CAT1_A_6M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_A_6M.SAFRA_REF
+        
+        LEFT JOIN tb_agrupada_FEAT_CAT1_B_3M
+            ON tb_public.ID = tb_agrupada_FEAT_CAT1_B_3M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_B_3M.SAFRA_REF
+        
+        LEFT JOIN tb_agrupada_FEAT_CAT1_B_6M
+            ON tb_public.ID = tb_agrupada_FEAT_CAT1_B_6M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_B_6M.SAFRA_REF
+        
+            )
+
+        SELECT 
+            tb_join.ID,
+            tb_join.SAFRA_REF,
+            
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT1_A_3M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT1_A_3M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT1_A_3M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT1_A_3M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT1_A_3M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT1_A_3M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT1_A_3M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT1_A_3M,
+
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT1_A_6M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT1_A_6M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT1_A_6M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT1_A_6M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT1_A_6M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT1_A_6M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT1_A_6M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT1_A_6M,
+
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT1_B_3M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT1_B_3M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT1_B_3M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT1_B_3M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT1_B_3M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT1_B_3M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT1_B_3M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT1_B_3M,
+
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT1_B_6M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT1_B_6M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT1_B_6M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT1_B_6M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT1_B_6M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT1_B_6M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT1_B_6M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT1_B_6M
+        FROM tb_join
+    </code></pre>
+</div>
+</div>
+<div id="cell-55" class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>df_mysql_agregada <span class="op">=</span> pd.read_sql(query, connection)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>df_mysql_agregada.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_4407/724425866.py:3: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  df_mysql_agregada = pd.read_sql(query, connection)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">SAFRA_REF</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT1_A_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT1_A_6M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT1_B_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT1_B_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT1_B_6M</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>4</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>5</td>
+<td>2023-02-01</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>75.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>71.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>6</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>7</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>10</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div id="cell-56" class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>tb_publico <span class="op">=</span> <span class="st">'tb_spine'</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>lista_janela <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">6</span>]</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>lista_feat_num <span class="op">=</span> [<span class="st">'FEAT_NUM1'</span>, <span class="st">'FEAT_NUM2'</span>]</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>feat_cat <span class="op">=</span> <span class="st">'FEAT_CAT2'</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>lista_valor_agragador <span class="op">=</span> [<span class="st">'B'</span>, <span class="st">'C'</span>]</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="bu">id</span> <span class="op">=</span> <span class="st">'ID'</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>safra_ref <span class="op">=</span> <span class="st">'SAFRA_REF'</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>tb_feat <span class="op">=</span> <span class="st">'tb_feat'</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>safra <span class="op">=</span> <span class="st">'SAFRA'</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> mysql_create_query_agregada(tb_publico, tb_feat, lista_janela, lista_feat_num, <span class="bu">id</span>, safra_ref, safra, feat_cat, lista_valor_agragador)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-57" class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(query)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+        WITH
+        tb_public as(
+        SELECT
+            ID,
+            SAFRA_REF
+        FROM tb_spine
+        ),
+    
+            
+    tb_agrupada_FEAT_CAT2_B_3M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT2_B_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT2_B_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT2_B_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT2_B_3M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT2_B_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT2_B_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT2_B_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT2_B_3M
+        FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 3 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+            AND tb_feat.FEAT_CAT2 = 'B'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+        
+            
+    tb_agrupada_FEAT_CAT2_B_6M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT2_B_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT2_B_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT2_B_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT2_B_6M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT2_B_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT2_B_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT2_B_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT2_B_6M
+        FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 6 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+            AND tb_feat.FEAT_CAT2 = 'B'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+        
+            
+    tb_agrupada_FEAT_CAT2_C_3M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT2_C_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT2_C_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT2_C_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT2_C_3M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT2_C_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT2_C_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT2_C_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT2_C_3M
+        FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 3 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+            AND tb_feat.FEAT_CAT2 = 'C'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+        
+            
+    tb_agrupada_FEAT_CAT2_C_6M as(
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT2_C_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT2_C_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT2_C_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT2_C_6M,
+
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT2_C_6M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT2_C_6M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT2_C_6M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT2_C_6M
+        FROM tb_public
+            INNER JOIN tb_feat 
+            ON  tb_public.ID = tb_feat.ID
+            AND DATE_ADD(tb_feat.SAFRA, INTERVAL 6 MONTH) &gt;= tb_public.SAFRA_REF
+            AND tb_feat.SAFRA &lt; tb_public.SAFRA_REF
+            AND tb_feat.FEAT_CAT2 = 'C'
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+),
+
+         
+    tb_join AS (
+        SELECT 
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+                    
+            tb_agrupada_FEAT_CAT2_B_3M.SUM_FEAT_NUM1_FEAT_CAT2_B_3M,
+            tb_agrupada_FEAT_CAT2_B_3M.MAX_FEAT_NUM1_FEAT_CAT2_B_3M,
+            tb_agrupada_FEAT_CAT2_B_3M.MIN_FEAT_NUM1_FEAT_CAT2_B_3M,
+            tb_agrupada_FEAT_CAT2_B_3M.AVG_FEAT_NUM1_FEAT_CAT2_B_3M,
+
+            tb_agrupada_FEAT_CAT2_B_3M.SUM_FEAT_NUM2_FEAT_CAT2_B_3M,
+            tb_agrupada_FEAT_CAT2_B_3M.MAX_FEAT_NUM2_FEAT_CAT2_B_3M,
+            tb_agrupada_FEAT_CAT2_B_3M.MIN_FEAT_NUM2_FEAT_CAT2_B_3M,
+            tb_agrupada_FEAT_CAT2_B_3M.AVG_FEAT_NUM2_FEAT_CAT2_B_3M,
+
+            tb_agrupada_FEAT_CAT2_B_6M.SUM_FEAT_NUM1_FEAT_CAT2_B_6M,
+            tb_agrupada_FEAT_CAT2_B_6M.MAX_FEAT_NUM1_FEAT_CAT2_B_6M,
+            tb_agrupada_FEAT_CAT2_B_6M.MIN_FEAT_NUM1_FEAT_CAT2_B_6M,
+            tb_agrupada_FEAT_CAT2_B_6M.AVG_FEAT_NUM1_FEAT_CAT2_B_6M,
+
+            tb_agrupada_FEAT_CAT2_B_6M.SUM_FEAT_NUM2_FEAT_CAT2_B_6M,
+            tb_agrupada_FEAT_CAT2_B_6M.MAX_FEAT_NUM2_FEAT_CAT2_B_6M,
+            tb_agrupada_FEAT_CAT2_B_6M.MIN_FEAT_NUM2_FEAT_CAT2_B_6M,
+            tb_agrupada_FEAT_CAT2_B_6M.AVG_FEAT_NUM2_FEAT_CAT2_B_6M,
+
+            tb_agrupada_FEAT_CAT2_C_3M.SUM_FEAT_NUM1_FEAT_CAT2_C_3M,
+            tb_agrupada_FEAT_CAT2_C_3M.MAX_FEAT_NUM1_FEAT_CAT2_C_3M,
+            tb_agrupada_FEAT_CAT2_C_3M.MIN_FEAT_NUM1_FEAT_CAT2_C_3M,
+            tb_agrupada_FEAT_CAT2_C_3M.AVG_FEAT_NUM1_FEAT_CAT2_C_3M,
+
+            tb_agrupada_FEAT_CAT2_C_3M.SUM_FEAT_NUM2_FEAT_CAT2_C_3M,
+            tb_agrupada_FEAT_CAT2_C_3M.MAX_FEAT_NUM2_FEAT_CAT2_C_3M,
+            tb_agrupada_FEAT_CAT2_C_3M.MIN_FEAT_NUM2_FEAT_CAT2_C_3M,
+            tb_agrupada_FEAT_CAT2_C_3M.AVG_FEAT_NUM2_FEAT_CAT2_C_3M,
+
+            tb_agrupada_FEAT_CAT2_C_6M.SUM_FEAT_NUM1_FEAT_CAT2_C_6M,
+            tb_agrupada_FEAT_CAT2_C_6M.MAX_FEAT_NUM1_FEAT_CAT2_C_6M,
+            tb_agrupada_FEAT_CAT2_C_6M.MIN_FEAT_NUM1_FEAT_CAT2_C_6M,
+            tb_agrupada_FEAT_CAT2_C_6M.AVG_FEAT_NUM1_FEAT_CAT2_C_6M,
+
+            tb_agrupada_FEAT_CAT2_C_6M.SUM_FEAT_NUM2_FEAT_CAT2_C_6M,
+            tb_agrupada_FEAT_CAT2_C_6M.MAX_FEAT_NUM2_FEAT_CAT2_C_6M,
+            tb_agrupada_FEAT_CAT2_C_6M.MIN_FEAT_NUM2_FEAT_CAT2_C_6M,
+            tb_agrupada_FEAT_CAT2_C_6M.AVG_FEAT_NUM2_FEAT_CAT2_C_6M   
+        FROM tb_public 
+                
+        LEFT JOIN tb_agrupada_FEAT_CAT2_B_3M
+            ON tb_public.ID = tb_agrupada_FEAT_CAT2_B_3M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT2_B_3M.SAFRA_REF
+        
+        LEFT JOIN tb_agrupada_FEAT_CAT2_B_6M
+            ON tb_public.ID = tb_agrupada_FEAT_CAT2_B_6M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT2_B_6M.SAFRA_REF
+        
+        LEFT JOIN tb_agrupada_FEAT_CAT2_C_3M
+            ON tb_public.ID = tb_agrupada_FEAT_CAT2_C_3M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT2_C_3M.SAFRA_REF
+        
+        LEFT JOIN tb_agrupada_FEAT_CAT2_C_6M
+            ON tb_public.ID = tb_agrupada_FEAT_CAT2_C_6M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT2_C_6M.SAFRA_REF
+        
+            )
+
+        SELECT 
+            tb_join.ID,
+            tb_join.SAFRA_REF,
+            
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT2_B_3M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT2_B_3M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT2_B_3M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT2_B_3M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT2_B_3M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT2_B_3M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT2_B_3M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT2_B_3M,
+
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT2_B_6M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT2_B_6M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT2_B_6M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT2_B_6M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT2_B_6M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT2_B_6M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT2_B_6M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT2_B_6M,
+
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT2_C_3M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT2_C_3M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT2_C_3M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT2_C_3M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT2_C_3M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT2_C_3M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT2_C_3M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT2_C_3M,
+
+            tb_join.SUM_FEAT_NUM1_FEAT_CAT2_C_6M,
+            tb_join.MAX_FEAT_NUM1_FEAT_CAT2_C_6M,
+            tb_join.MIN_FEAT_NUM1_FEAT_CAT2_C_6M,
+            tb_join.AVG_FEAT_NUM1_FEAT_CAT2_C_6M,
+
+            tb_join.SUM_FEAT_NUM2_FEAT_CAT2_C_6M,
+            tb_join.MAX_FEAT_NUM2_FEAT_CAT2_C_6M,
+            tb_join.MIN_FEAT_NUM2_FEAT_CAT2_C_6M,
+            tb_join.AVG_FEAT_NUM2_FEAT_CAT2_C_6M
+        FROM tb_join
+    </code></pre>
+</div>
+</div>
+<div id="cell-58" class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>df_mysql_agregada <span class="op">=</span> pd.read_sql(query, connection)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>df_mysql_agregada.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_4407/724425866.py:3: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  df_mysql_agregada = pd.read_sql(query, connection)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">SAFRA_REF</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT2_B_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT2_B_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT2_B_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT2_B_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT2_B_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT2_B_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT2_B_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT2_B_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT2_B_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT2_B_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT2_B_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT2_B_6M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT2_B_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT2_B_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT2_B_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT2_B_6M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT2_C_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT2_C_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT2_C_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT2_C_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT2_C_3M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT2_C_3M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT2_C_3M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT2_C_3M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM1_FEAT_CAT2_C_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM1_FEAT_CAT2_C_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM1_FEAT_CAT2_C_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM1_FEAT_CAT2_C_6M</th>
+<th data-quarto-table-cell-role="th">SUM_FEAT_NUM2_FEAT_CAT2_C_6M</th>
+<th data-quarto-table-cell-role="th">MAX_FEAT_NUM2_FEAT_CAT2_C_6M</th>
+<th data-quarto-table-cell-role="th">MIN_FEAT_NUM2_FEAT_CAT2_C_6M</th>
+<th data-quarto-table-cell-role="th">AVG_FEAT_NUM2_FEAT_CAT2_C_6M</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>4</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>5</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>6</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>7</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>73.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+<td>82.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>10</td>
+<td>2023-02-01</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="snowflake" class="level2">
+<h2 class="anchored" data-anchor-id="snowflake">3. Snowflake</h2>
+<section id="criação-de-variáveis-numéricas-2" class="level3">
+<h3 class="anchored" data-anchor-id="criação-de-variáveis-numéricas-2">Criação de variáveis numéricas</h3>
+<p>A função snow_create_query_num() cria um texto com a query para a criação de variáveis com as operações soma, mínimo, máximo e média das variáveis listadas em feat_num_lista e com a janela de tempo listada em lista_janela.</p>
+<div id="cell-62" class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>tb_publico <span class="op">=</span> <span class="st">'tb_spine'</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>tb_feat <span class="op">=</span> <span class="st">'tb_feat'</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="bu">id</span> <span class="op">=</span> <span class="st">'ID'</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>safra_ref <span class="op">=</span> <span class="st">'SAFRA_REF'</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>safra <span class="op">=</span> <span class="st">'SAFRA'</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>feat_num_lista <span class="op">=</span> [<span class="st">'FEAT_NUM1'</span>,<span class="st">'FEAT_NUM2'</span>]</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>lista_janela <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>query_final_num_snow <span class="op">=</span> snow_create_query_num(tb_publico, tb_feat, lista_janela,feat_num_lista, <span class="bu">id</span>, safra_ref, safra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-63" class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(query_final_num_snow)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    WITH 
+    tb_public AS (
+        SELECT 
+            *
+        FROM tb_spine
+    ),
+    
+        -- Criação de variáveis de janela de 1M
+        tb_janela_1M AS (
+            SELECT 
+                tb_public.ID,
+                tb_public.SAFRA_REF,
+                
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM1 para a janela 1
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_SUM_1M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MIN_1M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MAX_1M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_AVG_1M,
+            MEDIAN(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MEDIAN_1M,
+            
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM2 para a janela 1
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_SUM_1M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MIN_1M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MAX_1M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_AVG_1M,
+            MEDIAN(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MEDIAN_1M
+            FROM tb_public
+            INNER JOIN tb_feat 
+                ON  tb_public.ID = tb_feat.ID
+                AND (DATEADD('month', 1 , TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD')) &gt;=  tb_public.SAFRA_REF) 
+                AND (TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD') &lt; tb_public.SAFRA_REF)
+            GROUP BY tb_public.ID, tb_public.SAFRA_REF
+        ),
+        
+        -- Criação de variáveis de janela de 2M
+        tb_janela_2M AS (
+            SELECT 
+                tb_public.ID,
+                tb_public.SAFRA_REF,
+                
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM1 para a janela 2
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_SUM_2M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MIN_2M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MAX_2M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_AVG_2M,
+            MEDIAN(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MEDIAN_2M,
+            
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM2 para a janela 2
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_SUM_2M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MIN_2M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MAX_2M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_AVG_2M,
+            MEDIAN(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MEDIAN_2M
+            FROM tb_public
+            INNER JOIN tb_feat 
+                ON  tb_public.ID = tb_feat.ID
+                AND (DATEADD('month', 2 , TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD')) &gt;=  tb_public.SAFRA_REF) 
+                AND (TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD') &lt; tb_public.SAFRA_REF)
+            GROUP BY tb_public.ID, tb_public.SAFRA_REF
+        ),
+        
+        -- Criação de variáveis de janela de 3M
+        tb_janela_3M AS (
+            SELECT 
+                tb_public.ID,
+                tb_public.SAFRA_REF,
+                
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM1 para a janela 3
+            SUM(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_SUM_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MIN_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MAX_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_AVG_3M,
+            MEDIAN(COALESCE(tb_feat.FEAT_NUM1,0)) AS FEAT_NUM1_MEDIAN_3M,
+            
+             -- Criação de variáveis numéricas a partir da coluna FEAT_NUM2 para a janela 3
+            SUM(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_SUM_3M,
+            MIN(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MIN_3M,
+            MAX(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MAX_3M,
+            AVG(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_AVG_3M,
+            MEDIAN(COALESCE(tb_feat.FEAT_NUM2,0)) AS FEAT_NUM2_MEDIAN_3M
+            FROM tb_public
+            INNER JOIN tb_feat 
+                ON  tb_public.ID = tb_feat.ID
+                AND (DATEADD('month', 3 , TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD')) &gt;=  tb_public.SAFRA_REF) 
+                AND (TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD') &lt; tb_public.SAFRA_REF)
+            GROUP BY tb_public.ID, tb_public.SAFRA_REF
+        ),
+        
+
+    tb_join AS (
+        SELECT 
+            tb_public.*,
+            
+            tb_janela_1M.FEAT_NUM1_SUM_1M,
+            tb_janela_1M.FEAT_NUM1_MIN_1M,
+            tb_janela_1M.FEAT_NUM1_MAX_1M,
+            tb_janela_1M.FEAT_NUM1_AVG_1M,
+            tb_janela_1M.FEAT_NUM1_MEDIAN_1M,
+            
+            tb_janela_1M.FEAT_NUM2_SUM_1M,
+            tb_janela_1M.FEAT_NUM2_MIN_1M,
+            tb_janela_1M.FEAT_NUM2_MAX_1M,
+            tb_janela_1M.FEAT_NUM2_AVG_1M,
+            tb_janela_1M.FEAT_NUM2_MEDIAN_1M,
+            
+            tb_janela_2M.FEAT_NUM1_SUM_2M,
+            tb_janela_2M.FEAT_NUM1_MIN_2M,
+            tb_janela_2M.FEAT_NUM1_MAX_2M,
+            tb_janela_2M.FEAT_NUM1_AVG_2M,
+            tb_janela_2M.FEAT_NUM1_MEDIAN_2M,
+            
+            tb_janela_2M.FEAT_NUM2_SUM_2M,
+            tb_janela_2M.FEAT_NUM2_MIN_2M,
+            tb_janela_2M.FEAT_NUM2_MAX_2M,
+            tb_janela_2M.FEAT_NUM2_AVG_2M,
+            tb_janela_2M.FEAT_NUM2_MEDIAN_2M,
+            
+            tb_janela_3M.FEAT_NUM1_SUM_3M,
+            tb_janela_3M.FEAT_NUM1_MIN_3M,
+            tb_janela_3M.FEAT_NUM1_MAX_3M,
+            tb_janela_3M.FEAT_NUM1_AVG_3M,
+            tb_janela_3M.FEAT_NUM1_MEDIAN_3M,
+            
+            tb_janela_3M.FEAT_NUM2_SUM_3M,
+            tb_janela_3M.FEAT_NUM2_MIN_3M,
+            tb_janela_3M.FEAT_NUM2_MAX_3M,
+            tb_janela_3M.FEAT_NUM2_AVG_3M,
+            tb_janela_3M.FEAT_NUM2_MEDIAN_3M
+
+        FROM tb_public 
+        
+        LEFT JOIN tb_janela_1M
+            ON tb_public.ID = tb_janela_1M.ID
+            AND tb_public.SAFRA_REF = tb_janela_1M.SAFRA_REF
+    
+        LEFT JOIN tb_janela_2M
+            ON tb_public.ID = tb_janela_2M.ID
+            AND tb_public.SAFRA_REF = tb_janela_2M.SAFRA_REF
+    
+        LEFT JOIN tb_janela_3M
+            ON tb_public.ID = tb_janela_3M.ID
+            AND tb_public.SAFRA_REF = tb_janela_3M.SAFRA_REF
+    
+    )
+        
+    SELECT 
+        tb_join.ID,
+        tb_join.SAFRA_REF,
+        
+            tb_join.FEAT_NUM1_SUM_1M,
+            tb_join.FEAT_NUM1_MIN_1M,
+            tb_join.FEAT_NUM1_MAX_1M,
+            tb_join.FEAT_NUM1_AVG_1M,
+            tb_join.FEAT_NUM1_MEDIAN_1M,
+            
+            tb_join.FEAT_NUM2_SUM_1M,
+            tb_join.FEAT_NUM2_MIN_1M,
+            tb_join.FEAT_NUM2_MAX_1M,
+            tb_join.FEAT_NUM2_AVG_1M,
+            tb_join.FEAT_NUM2_MEDIAN_1M,
+            
+            tb_join.FEAT_NUM1_SUM_2M,
+            tb_join.FEAT_NUM1_MIN_2M,
+            tb_join.FEAT_NUM1_MAX_2M,
+            tb_join.FEAT_NUM1_AVG_2M,
+            tb_join.FEAT_NUM1_MEDIAN_2M,
+            
+            tb_join.FEAT_NUM2_SUM_2M,
+            tb_join.FEAT_NUM2_MIN_2M,
+            tb_join.FEAT_NUM2_MAX_2M,
+            tb_join.FEAT_NUM2_AVG_2M,
+            tb_join.FEAT_NUM2_MEDIAN_2M,
+            
+            tb_join.FEAT_NUM1_SUM_3M,
+            tb_join.FEAT_NUM1_MIN_3M,
+            tb_join.FEAT_NUM1_MAX_3M,
+            tb_join.FEAT_NUM1_AVG_3M,
+            tb_join.FEAT_NUM1_MEDIAN_3M,
+            
+            tb_join.FEAT_NUM2_SUM_3M,
+            tb_join.FEAT_NUM2_MIN_3M,
+            tb_join.FEAT_NUM2_MAX_3M,
+            tb_join.FEAT_NUM2_AVG_3M,
+            tb_join.FEAT_NUM2_MEDIAN_3M
+    FROM tb_join
+    </code></pre>
+</div>
+</div>
+</section>
+<section id="criação-de-variáveis-categóricas-2" class="level3">
+<h3 class="anchored" data-anchor-id="criação-de-variáveis-categóricas-2">Criação de variáveis categóricas</h3>
+<p>A função query_final_cat_snow() cria um texto com a query para a criação de variáveis com a moda de cada uma das variáveis listadas em feat_num_lista na janela de tempo fornecida em lista_janela.</p>
+<div id="cell-66" class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>tb_publico <span class="op">=</span> <span class="st">'tb_spine'</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>tb_feat <span class="op">=</span> <span class="st">'tb_feat'</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="bu">id</span> <span class="op">=</span> <span class="st">'ID'</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>safra_ref <span class="op">=</span> <span class="st">'SAFRA_REF'</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>safra <span class="op">=</span> <span class="st">'SAFRA'</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>feat_num_lista <span class="op">=</span> [<span class="st">'FEAT_CAT1'</span>,<span class="st">'FEAT_CAT2'</span>]</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>lista_janela <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>query_final_cat_snow <span class="op">=</span> snow_create_query_cat(tb_publico, tb_feat, lista_janela, feat_num_lista, <span class="bu">id</span>, safra_ref, safra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-67" class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(query_final_cat_snow)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    WITH 
+    tb_public AS (
+        SELECT 
+            ID,
+            SAFRA_REF
+        FROM tb_spine
+    ),
+    
+    tb_janela_1M AS (
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            
+            MODE(FEAT_CAT1) AS MODE_FEAT_CAT1_1M,
+            MODE(FEAT_CAT2) AS MODE_FEAT_CAT2_1M           
+            
+        FROM tb_public
+        LEFT JOIN tb_feat
+            ON  tb_public.ID = tb_feat.ID
+            AND (DATEADD('month', 1 , TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD')) &gt;=  tb_public.SAFRA_REF) 
+            AND (TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD') &lt; tb_public.SAFRA_REF)
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF
+    ),
+
+    tb_janela_2M AS (
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            
+            MODE(FEAT_CAT1) AS MODE_FEAT_CAT1_2M,
+            MODE(FEAT_CAT2) AS MODE_FEAT_CAT2_2M           
+            
+        FROM tb_public
+        LEFT JOIN tb_feat
+            ON  tb_public.ID = tb_feat.ID
+            AND (DATEADD('month', 2 , TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD')) &gt;=  tb_public.SAFRA_REF) 
+            AND (TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD') &lt; tb_public.SAFRA_REF)
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF
+    ),
+
+    tb_janela_3M AS (
+        SELECT
+            tb_public.ID,
+            tb_public.SAFRA_REF,
+            
+            MODE(FEAT_CAT1) AS MODE_FEAT_CAT1_3M,
+            MODE(FEAT_CAT2) AS MODE_FEAT_CAT2_3M           
+            
+        FROM tb_public
+        LEFT JOIN tb_feat
+            ON  tb_public.ID = tb_feat.ID
+            AND (DATEADD('month', 3 , TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD')) &gt;=  tb_public.SAFRA_REF) 
+            AND (TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD') &lt; tb_public.SAFRA_REF)
+        GROUP BY tb_public.ID, tb_public.SAFRA_REF
+    )
+
+    SELECT 
+        tb_public.ID,
+        tb_public.SAFRA_REF,
+        
+        tb_janela_1M.MODE_FEAT_CAT1_1M,
+        tb_janela_1M.MODE_FEAT_CAT2_1M,
+        tb_janela_2M.MODE_FEAT_CAT1_2M,
+        tb_janela_2M.MODE_FEAT_CAT2_2M,
+        tb_janela_3M.MODE_FEAT_CAT1_3M,
+        tb_janela_3M.MODE_FEAT_CAT2_3M
+        
+    FROM tb_public
+    
+    LEFT JOIN tb_janela_1M
+        ON tb_public.ID = JOIN tb_janela_1M.ID
+        AND tb_public.SAFRA_REF = JOIN tb_janela_1M.SAFRA_REF
+
+    LEFT JOIN tb_janela_2M
+        ON tb_public.ID = JOIN tb_janela_2M.ID
+        AND tb_public.SAFRA_REF = JOIN tb_janela_2M.SAFRA_REF
+
+    LEFT JOIN tb_janela_3M
+        ON tb_public.ID = JOIN tb_janela_3M.ID
+        AND tb_public.SAFRA_REF = JOIN tb_janela_3M.SAFRA_REF
+
+    </code></pre>
+</div>
+</div>
+</section>
+<section id="criação-de-variáveis-agragadas-2" class="level3">
+<h3 class="anchored" data-anchor-id="criação-de-variáveis-agragadas-2">Criação de variáveis agragadas</h3>
+<div id="cell-69" class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>lista_feat_num <span class="op">=</span> [<span class="st">'FEAT_NUM1'</span>, <span class="st">'FEAT_NUM2'</span>]</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>feat_cat <span class="op">=</span> <span class="st">'FEAT_CAT1'</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>lista_valor_agragador <span class="op">=</span> [<span class="st">'B'</span>, <span class="st">'C'</span>]</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="bu">id</span> <span class="op">=</span> <span class="st">'ID'</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>safra_ref <span class="op">=</span> <span class="st">'SAFRA_REF'</span></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>tb_feat <span class="op">=</span> <span class="st">'tb_feat'</span></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>safra <span class="op">=</span> <span class="st">'SAFRA'</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>janelas <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>tb_publico <span class="op">=</span> <span class="st">'tb_spine'</span></span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(snow_create_query_agregada(tb_publico, tb_feat, janelas,  lista_feat_num, <span class="bu">id</span>, safra_ref, safra, feat_cat, lista_valor_agragador))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+WITH
+tb_public as(
+    SELECT
+        ID,
+        SAFRA_REF
+    FROM tb_spine
+),
+
+            
+-- Criação de variáveis agrupadas com janela de 1M
+tb_agrupada_FEAT_CAT1_B_1M as(
+    SELECT
+        tb_public.ID,
+        tb_public.SAFRA_REF,
+
+        -- Criação de variáveis agrupadas a partir da coluna FEAT_CAT1 e FEAT_NUM1 para a janela 1
+        SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_B_1M,
+        MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_B_1M,
+        MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_B_1M,
+        AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_B_1M,
+        MEDIAN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MEDIAN_FEAT_NUM1_FEAT_CAT1_B_1M,
+
+        -- Criação de variáveis agrupadas a partir da coluna FEAT_CAT1 e FEAT_NUM2 para a janela 1
+        SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_B_1M,
+        MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_B_1M,
+        MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_B_1M,
+        AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_B_1M,
+        MEDIAN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MEDIAN_FEAT_NUM2_FEAT_CAT1_B_1M
+    FROM tb_public
+    INNER JOIN tb_feat
+        ON  tb_public.ID = tb_feat.ID
+        AND (DATEADD('month', 1 , TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD')) &gt;=  tb_public.SAFRA_REF) 
+        AND (TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD') &lt; tb_public.SAFRA_REF)
+        AND tb_feat.FEAT_CAT1 = 'B'
+    GROUP BY tb_public.ID, tb_public.SAFRA_REF
+),
+
+        
+            
+-- Criação de variáveis agrupadas com janela de 2M
+tb_agrupada_FEAT_CAT1_B_2M as(
+    SELECT
+        tb_public.ID,
+        tb_public.SAFRA_REF,
+
+        -- Criação de variáveis agrupadas a partir da coluna FEAT_CAT1 e FEAT_NUM1 para a janela 2
+        SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_B_2M,
+        MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_B_2M,
+        MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_B_2M,
+        AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_B_2M,
+        MEDIAN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MEDIAN_FEAT_NUM1_FEAT_CAT1_B_2M,
+
+        -- Criação de variáveis agrupadas a partir da coluna FEAT_CAT1 e FEAT_NUM2 para a janela 2
+        SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_B_2M,
+        MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_B_2M,
+        MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_B_2M,
+        AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_B_2M,
+        MEDIAN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MEDIAN_FEAT_NUM2_FEAT_CAT1_B_2M
+    FROM tb_public
+    INNER JOIN tb_feat
+        ON  tb_public.ID = tb_feat.ID
+        AND (DATEADD('month', 2 , TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD')) &gt;=  tb_public.SAFRA_REF) 
+        AND (TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD') &lt; tb_public.SAFRA_REF)
+        AND tb_feat.FEAT_CAT1 = 'B'
+    GROUP BY tb_public.ID, tb_public.SAFRA_REF
+),
+
+        
+            
+-- Criação de variáveis agrupadas com janela de 3M
+tb_agrupada_FEAT_CAT1_B_3M as(
+    SELECT
+        tb_public.ID,
+        tb_public.SAFRA_REF,
+
+        -- Criação de variáveis agrupadas a partir da coluna FEAT_CAT1 e FEAT_NUM1 para a janela 3
+        SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_B_3M,
+        MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_B_3M,
+        MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_B_3M,
+        AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_B_3M,
+        MEDIAN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MEDIAN_FEAT_NUM1_FEAT_CAT1_B_3M,
+
+        -- Criação de variáveis agrupadas a partir da coluna FEAT_CAT1 e FEAT_NUM2 para a janela 3
+        SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_B_3M,
+        MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_B_3M,
+        MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_B_3M,
+        AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_B_3M,
+        MEDIAN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MEDIAN_FEAT_NUM2_FEAT_CAT1_B_3M
+    FROM tb_public
+    INNER JOIN tb_feat
+        ON  tb_public.ID = tb_feat.ID
+        AND (DATEADD('month', 3 , TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD')) &gt;=  tb_public.SAFRA_REF) 
+        AND (TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD') &lt; tb_public.SAFRA_REF)
+        AND tb_feat.FEAT_CAT1 = 'B'
+    GROUP BY tb_public.ID, tb_public.SAFRA_REF
+),
+
+        
+            
+-- Criação de variáveis agrupadas com janela de 1M
+tb_agrupada_FEAT_CAT1_C_1M as(
+    SELECT
+        tb_public.ID,
+        tb_public.SAFRA_REF,
+
+        -- Criação de variáveis agrupadas a partir da coluna FEAT_CAT1 e FEAT_NUM1 para a janela 1
+        SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_C_1M,
+        MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_C_1M,
+        MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_C_1M,
+        AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_C_1M,
+        MEDIAN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MEDIAN_FEAT_NUM1_FEAT_CAT1_C_1M,
+
+        -- Criação de variáveis agrupadas a partir da coluna FEAT_CAT1 e FEAT_NUM2 para a janela 1
+        SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_C_1M,
+        MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_C_1M,
+        MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_C_1M,
+        AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_C_1M,
+        MEDIAN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MEDIAN_FEAT_NUM2_FEAT_CAT1_C_1M
+    FROM tb_public
+    INNER JOIN tb_feat
+        ON  tb_public.ID = tb_feat.ID
+        AND (DATEADD('month', 1 , TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD')) &gt;=  tb_public.SAFRA_REF) 
+        AND (TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD') &lt; tb_public.SAFRA_REF)
+        AND tb_feat.FEAT_CAT1 = 'C'
+    GROUP BY tb_public.ID, tb_public.SAFRA_REF
+),
+
+        
+            
+-- Criação de variáveis agrupadas com janela de 2M
+tb_agrupada_FEAT_CAT1_C_2M as(
+    SELECT
+        tb_public.ID,
+        tb_public.SAFRA_REF,
+
+        -- Criação de variáveis agrupadas a partir da coluna FEAT_CAT1 e FEAT_NUM1 para a janela 2
+        SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_C_2M,
+        MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_C_2M,
+        MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_C_2M,
+        AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_C_2M,
+        MEDIAN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MEDIAN_FEAT_NUM1_FEAT_CAT1_C_2M,
+
+        -- Criação de variáveis agrupadas a partir da coluna FEAT_CAT1 e FEAT_NUM2 para a janela 2
+        SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_C_2M,
+        MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_C_2M,
+        MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_C_2M,
+        AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_C_2M,
+        MEDIAN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MEDIAN_FEAT_NUM2_FEAT_CAT1_C_2M
+    FROM tb_public
+    INNER JOIN tb_feat
+        ON  tb_public.ID = tb_feat.ID
+        AND (DATEADD('month', 2 , TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD')) &gt;=  tb_public.SAFRA_REF) 
+        AND (TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD') &lt; tb_public.SAFRA_REF)
+        AND tb_feat.FEAT_CAT1 = 'C'
+    GROUP BY tb_public.ID, tb_public.SAFRA_REF
+),
+
+        
+            
+-- Criação de variáveis agrupadas com janela de 3M
+tb_agrupada_FEAT_CAT1_C_3M as(
+    SELECT
+        tb_public.ID,
+        tb_public.SAFRA_REF,
+
+        -- Criação de variáveis agrupadas a partir da coluna FEAT_CAT1 e FEAT_NUM1 para a janela 3
+        SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_C_3M,
+        MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_C_3M,
+        MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_C_3M,
+        AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_C_3M,
+        MEDIAN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MEDIAN_FEAT_NUM1_FEAT_CAT1_C_3M,
+
+        -- Criação de variáveis agrupadas a partir da coluna FEAT_CAT1 e FEAT_NUM2 para a janela 3
+        SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_C_3M,
+        MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_C_3M,
+        MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_C_3M,
+        AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_C_3M,
+        MEDIAN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MEDIAN_FEAT_NUM2_FEAT_CAT1_C_3M
+    FROM tb_public
+    INNER JOIN tb_feat
+        ON  tb_public.ID = tb_feat.ID
+        AND (DATEADD('month', 3 , TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD')) &gt;=  tb_public.SAFRA_REF) 
+        AND (TO_DATE(tb_feat.SAFRA, 'YYYY-MM-DD') &lt; tb_public.SAFRA_REF)
+        AND tb_feat.FEAT_CAT1 = 'C'
+    GROUP BY tb_public.ID, tb_public.SAFRA_REF
+)
+
+    SELECT 
+        tb_public.ID,
+        tb_public.SAFRA_REF,
+        
+        
+            
+        tb_agrupada_FEAT_CAT1_B_1M.SUM_FEAT_NUM1_FEAT_CAT1_B_1M,
+        tb_agrupada_FEAT_CAT1_B_1M.MAX_FEAT_NUM1_FEAT_CAT1_B_1M,
+        tb_agrupada_FEAT_CAT1_B_1M.MIN_FEAT_NUM1_FEAT_CAT1_B_1M,
+        tb_agrupada_FEAT_CAT1_B_1M.AVG_FEAT_NUM1_FEAT_CAT1_B_1M,
+        tb_agrupada_FEAT_CAT1_B_1M.MEDIAN_FEAT_NUM1_FEAT_CAT1_B_1M,
+
+        tb_agrupada_FEAT_CAT1_B_1M.SUM_FEAT_NUM2_FEAT_CAT1_B_1M,
+        tb_agrupada_FEAT_CAT1_B_1M.MAX_FEAT_NUM2_FEAT_CAT1_B_1M,
+        tb_agrupada_FEAT_CAT1_B_1M.MIN_FEAT_NUM2_FEAT_CAT1_B_1M,
+        tb_agrupada_FEAT_CAT1_B_1M.AVG_FEAT_NUM2_FEAT_CAT1_B_1M,
+        tb_agrupada_FEAT_CAT1_B_1M.MEDIAN_FEAT_NUM2_FEAT_CAT1_B_1M,
+
+        
+            
+        tb_agrupada_FEAT_CAT1_B_2M.SUM_FEAT_NUM1_FEAT_CAT1_B_2M,
+        tb_agrupada_FEAT_CAT1_B_2M.MAX_FEAT_NUM1_FEAT_CAT1_B_2M,
+        tb_agrupada_FEAT_CAT1_B_2M.MIN_FEAT_NUM1_FEAT_CAT1_B_2M,
+        tb_agrupada_FEAT_CAT1_B_2M.AVG_FEAT_NUM1_FEAT_CAT1_B_2M,
+        tb_agrupada_FEAT_CAT1_B_2M.MEDIAN_FEAT_NUM1_FEAT_CAT1_B_2M,
+
+        tb_agrupada_FEAT_CAT1_B_2M.SUM_FEAT_NUM2_FEAT_CAT1_B_2M,
+        tb_agrupada_FEAT_CAT1_B_2M.MAX_FEAT_NUM2_FEAT_CAT1_B_2M,
+        tb_agrupada_FEAT_CAT1_B_2M.MIN_FEAT_NUM2_FEAT_CAT1_B_2M,
+        tb_agrupada_FEAT_CAT1_B_2M.AVG_FEAT_NUM2_FEAT_CAT1_B_2M,
+        tb_agrupada_FEAT_CAT1_B_2M.MEDIAN_FEAT_NUM2_FEAT_CAT1_B_2M,
+
+        
+            
+        tb_agrupada_FEAT_CAT1_B_3M.SUM_FEAT_NUM1_FEAT_CAT1_B_3M,
+        tb_agrupada_FEAT_CAT1_B_3M.MAX_FEAT_NUM1_FEAT_CAT1_B_3M,
+        tb_agrupada_FEAT_CAT1_B_3M.MIN_FEAT_NUM1_FEAT_CAT1_B_3M,
+        tb_agrupada_FEAT_CAT1_B_3M.AVG_FEAT_NUM1_FEAT_CAT1_B_3M,
+        tb_agrupada_FEAT_CAT1_B_3M.MEDIAN_FEAT_NUM1_FEAT_CAT1_B_3M,
+
+        tb_agrupada_FEAT_CAT1_B_3M.SUM_FEAT_NUM2_FEAT_CAT1_B_3M,
+        tb_agrupada_FEAT_CAT1_B_3M.MAX_FEAT_NUM2_FEAT_CAT1_B_3M,
+        tb_agrupada_FEAT_CAT1_B_3M.MIN_FEAT_NUM2_FEAT_CAT1_B_3M,
+        tb_agrupada_FEAT_CAT1_B_3M.AVG_FEAT_NUM2_FEAT_CAT1_B_3M,
+        tb_agrupada_FEAT_CAT1_B_3M.MEDIAN_FEAT_NUM2_FEAT_CAT1_B_3M,
+
+        
+            
+        tb_agrupada_FEAT_CAT1_C_1M.SUM_FEAT_NUM1_FEAT_CAT1_C_1M,
+        tb_agrupada_FEAT_CAT1_C_1M.MAX_FEAT_NUM1_FEAT_CAT1_C_1M,
+        tb_agrupada_FEAT_CAT1_C_1M.MIN_FEAT_NUM1_FEAT_CAT1_C_1M,
+        tb_agrupada_FEAT_CAT1_C_1M.AVG_FEAT_NUM1_FEAT_CAT1_C_1M,
+        tb_agrupada_FEAT_CAT1_C_1M.MEDIAN_FEAT_NUM1_FEAT_CAT1_C_1M,
+
+        tb_agrupada_FEAT_CAT1_C_1M.SUM_FEAT_NUM2_FEAT_CAT1_C_1M,
+        tb_agrupada_FEAT_CAT1_C_1M.MAX_FEAT_NUM2_FEAT_CAT1_C_1M,
+        tb_agrupada_FEAT_CAT1_C_1M.MIN_FEAT_NUM2_FEAT_CAT1_C_1M,
+        tb_agrupada_FEAT_CAT1_C_1M.AVG_FEAT_NUM2_FEAT_CAT1_C_1M,
+        tb_agrupada_FEAT_CAT1_C_1M.MEDIAN_FEAT_NUM2_FEAT_CAT1_C_1M,
+
+        
+            
+        tb_agrupada_FEAT_CAT1_C_2M.SUM_FEAT_NUM1_FEAT_CAT1_C_2M,
+        tb_agrupada_FEAT_CAT1_C_2M.MAX_FEAT_NUM1_FEAT_CAT1_C_2M,
+        tb_agrupada_FEAT_CAT1_C_2M.MIN_FEAT_NUM1_FEAT_CAT1_C_2M,
+        tb_agrupada_FEAT_CAT1_C_2M.AVG_FEAT_NUM1_FEAT_CAT1_C_2M,
+        tb_agrupada_FEAT_CAT1_C_2M.MEDIAN_FEAT_NUM1_FEAT_CAT1_C_2M,
+
+        tb_agrupada_FEAT_CAT1_C_2M.SUM_FEAT_NUM2_FEAT_CAT1_C_2M,
+        tb_agrupada_FEAT_CAT1_C_2M.MAX_FEAT_NUM2_FEAT_CAT1_C_2M,
+        tb_agrupada_FEAT_CAT1_C_2M.MIN_FEAT_NUM2_FEAT_CAT1_C_2M,
+        tb_agrupada_FEAT_CAT1_C_2M.AVG_FEAT_NUM2_FEAT_CAT1_C_2M,
+        tb_agrupada_FEAT_CAT1_C_2M.MEDIAN_FEAT_NUM2_FEAT_CAT1_C_2M,
+
+        
+            
+        tb_agrupada_FEAT_CAT1_C_3M.SUM_FEAT_NUM1_FEAT_CAT1_C_3M,
+        tb_agrupada_FEAT_CAT1_C_3M.MAX_FEAT_NUM1_FEAT_CAT1_C_3M,
+        tb_agrupada_FEAT_CAT1_C_3M.MIN_FEAT_NUM1_FEAT_CAT1_C_3M,
+        tb_agrupada_FEAT_CAT1_C_3M.AVG_FEAT_NUM1_FEAT_CAT1_C_3M,
+        tb_agrupada_FEAT_CAT1_C_3M.MEDIAN_FEAT_NUM1_FEAT_CAT1_C_3M,
+
+        tb_agrupada_FEAT_CAT1_C_3M.SUM_FEAT_NUM2_FEAT_CAT1_C_3M,
+        tb_agrupada_FEAT_CAT1_C_3M.MAX_FEAT_NUM2_FEAT_CAT1_C_3M,
+        tb_agrupada_FEAT_CAT1_C_3M.MIN_FEAT_NUM2_FEAT_CAT1_C_3M,
+        tb_agrupada_FEAT_CAT1_C_3M.AVG_FEAT_NUM2_FEAT_CAT1_C_3M,
+        tb_agrupada_FEAT_CAT1_C_3M.MEDIAN_FEAT_NUM2_FEAT_CAT1_C_3M
+    FROM tb_public
+    
+    LEFT JOIN  tb_agrupada_FEAT_CAT1_B_1M
+            ON  tb_public.ID = tb_agrupada_FEAT_CAT1_B_1M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_B_1M.SAFRA_REF
+        
+    LEFT JOIN  tb_agrupada_FEAT_CAT1_B_2M
+            ON  tb_public.ID = tb_agrupada_FEAT_CAT1_B_2M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_B_2M.SAFRA_REF
+        
+    LEFT JOIN  tb_agrupada_FEAT_CAT1_B_3M
+            ON  tb_public.ID = tb_agrupada_FEAT_CAT1_B_3M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_B_3M.SAFRA_REF
+        
+    LEFT JOIN  tb_agrupada_FEAT_CAT1_C_1M
+            ON  tb_public.ID = tb_agrupada_FEAT_CAT1_C_1M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_C_1M.SAFRA_REF
+        
+    LEFT JOIN  tb_agrupada_FEAT_CAT1_C_2M
+            ON  tb_public.ID = tb_agrupada_FEAT_CAT1_C_2M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_C_2M.SAFRA_REF
+        
+    LEFT JOIN  tb_agrupada_FEAT_CAT1_C_3M
+            ON  tb_public.ID = tb_agrupada_FEAT_CAT1_C_3M.ID
+            AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_C_3M.SAFRA_REF
+        
+
+    </code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ravennaro/featsql/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
