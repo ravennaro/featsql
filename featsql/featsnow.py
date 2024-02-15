@@ -173,6 +173,7 @@ def snow_query_agregada(janela, lista_feat_num, feat_cat, feat_cat_valor, id, sa
 
 
     query= f"""
+-- Criação de variáveis agrupadas com janela de {janela}M
 tb_agrupada_{feat_cat}_{feat_cat_valor}_{janela}M as(
     SELECT
         tb_public.{id},
@@ -180,6 +181,7 @@ tb_agrupada_{feat_cat}_{feat_cat_valor}_{janela}M as(
 """
     for feat_num in lista_feat_num:
         query +=f"""
+        -- Criação de variáveis agrupadas a partir da coluna {feat_cat} e {feat_num} para a janela {janela}
         SUM(COALESCE({tb_feat}.{feat_num},0))  AS SUM_{feat_num}_{feat_cat}_{feat_cat_valor}_{janela}M,
         MAX(COALESCE({tb_feat}.{feat_num},0))  AS MAX_{feat_num}_{feat_cat}_{feat_cat_valor}_{janela}M,
         MIN(COALESCE({tb_feat}.{feat_num},0))  AS MIN_{feat_num}_{feat_cat}_{feat_cat_valor}_{janela}M,
