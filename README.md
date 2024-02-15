@@ -10,6 +10,16 @@ from featsql.featsnow import *
 
 ## Imports
 
+``` python
+import pandas as pd
+```
+
+``` python
+import mysql.connector
+from sqlalchemy import create_engine
+pd.set_option('display.max_columns', None)
+```
+
 ## Install
 
 ``` sh
@@ -20,15 +30,77 @@ pip install featsql
 
 ### Configurando a engine
 
+``` python
+url_db = "sqlite:///../../data/mydatabase.db" 
+
+engine = create_engine(url_db)
+```
+
 ### Visão inicial do público
 
 Primeiro vamos observar o formato da tabela spine
+
+``` python
+df_spine = pd.read_sql("SELECT * FROM tb_spine", engine)
+df_spine.head()
+```
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&#10;    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+&#10;    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+|     | ID  | SAFRA_REF  | Target |
+|-----|-----|------------|--------|
+| 0   | 4   | 2023-02-01 | 0      |
+| 1   | 5   | 2023-02-01 | 0      |
+| 2   | 6   | 2023-02-01 | 0      |
+| 3   | 7   | 2023-02-01 | 0      |
+| 4   | 10  | 2023-02-01 | 0      |
+
+</div>
 
 ### Visão inicial da tabela de variáveis
 
 A tabela de variáveis contém 4 variáveis, duas sendo numéricas e duas
 categórica. Perceba que existem mais ID’s únicos e datas disponíveis
 nessa tabela do que na tabela spine, caso que ocorre no dia a dia.
+
+``` python
+df_data = pd.read_sql("SELECT * FROM tb_feat", engine)
+df_data.head()
+```
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&#10;    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+&#10;    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+|     | ID  | SAFRA      | FEAT_NUM1 | FEAT_NUM2 | FEAT_CAT1 | FEAT_CAT2 |
+|-----|-----|------------|-----------|-----------|-----------|-----------|
+| 0   | 1   | 2023-01-01 | -97       | -44       | A         | C         |
+| 1   | 2   | 2023-01-01 | 89        | 67        | C         | B         |
+| 2   | 3   | 2023-01-01 | 53        | 24        | A         | B         |
+| 3   | 4   | 2023-01-01 | -40       | 62        | B         | C         |
+| 4   | 5   | 2023-01-01 | 41        | 62        | B         | B         |
+
+</div>
 
 ### Criação de variáveis numéricas
 
@@ -47,6 +119,34 @@ feat_num_lista = ['FEAT_NUM1','FEAT_NUM2']
 lista_janela = [1,2,3]
 query_final_num_sqlite = sqlite_create_query_num(tb_publico, tb_feat, lista_janela,feat_num_lista, id, safra_ref, safra)
 ```
+
+``` python
+df_num_sqlite = pd.read_sql(query_final_num_sqlite, engine)
+df_num_sqlite.head()
+```
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&#10;    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+&#10;    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+|     | ID  | SAFRA_REF  | FEAT_NUM1_SUM_1M | FEAT_NUM1_MIN_1M | FEAT_NUM1_MAX_1M | FEAT_NUM1_AVG_1M | FEAT_NUM2_SUM_1M | FEAT_NUM2_MIN_1M | FEAT_NUM2_MAX_1M | FEAT_NUM2_AVG_1M | FEAT_NUM1_SUM_2M | FEAT_NUM1_MIN_2M | FEAT_NUM1_MAX_2M | FEAT_NUM1_AVG_2M | FEAT_NUM2_SUM_2M | FEAT_NUM2_MIN_2M | FEAT_NUM2_MAX_2M | FEAT_NUM2_AVG_2M | FEAT_NUM1_SUM_3M | FEAT_NUM1_MIN_3M | FEAT_NUM1_MAX_3M | FEAT_NUM1_AVG_3M | FEAT_NUM2_SUM_3M | FEAT_NUM2_MIN_3M | FEAT_NUM2_MAX_3M | FEAT_NUM2_AVG_3M |
+|-----|-----|------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|
+| 0   | 4   | 2023-02-01 | -40.0            | -40.0            | -40.0            | -40.0            | 62.0             | 62.0             | 62.0             | 62.0             | -40              | -40              | -40              | -40.0            | 62               | 62               | 62               | 62.0             | -40              | -40              | -40              | -40.0            | 62               | 62               | 62               | 62.0             |
+| 1   | 5   | 2023-02-01 | 41.0             | 41.0             | 41.0             | 41.0             | 62.0             | 62.0             | 62.0             | 62.0             | 41               | 41               | 41               | 41.0             | 62               | 62               | 62               | 62.0             | 41               | 41               | 41               | 41.0             | 62               | 62               | 62               | 62.0             |
+| 2   | 6   | 2023-02-01 | 36.0             | 36.0             | 36.0             | 36.0             | 63.0             | 63.0             | 63.0             | 63.0             | 36               | 36               | 36               | 36.0             | 63               | 63               | 63               | 63.0             | 36               | 36               | 36               | 36.0             | 63               | 63               | 63               | 63.0             |
+| 3   | 7   | 2023-02-01 | 47.0             | 47.0             | 47.0             | 47.0             | 44.0             | 44.0             | 44.0             | 44.0             | 47               | 47               | 47               | 47.0             | 44               | 44               | 44               | 44.0             | 47               | 47               | 47               | 47.0             | 44               | 44               | 44               | 44.0             |
+| 4   | 10  | 2023-02-01 | 29.0             | 29.0             | 29.0             | 29.0             | -7.0             | -7.0             | -7.0             | -7.0             | 29               | 29               | 29               | 29.0             | -7               | -7               | -7               | -7.0             | 29               | 29               | 29               | 29.0             | -7               | -7               | -7               | -7.0             |
+
+</div>
 
 Ajustar para não necessariamente criar um dataframe por conta do tamanho
 
@@ -212,6 +312,34 @@ feat_num_lista = ['FEAT_CAT1', 'FEAT_CAT2']
 lista_janela = [1, 3, 6]
 query_final_cat_sqlite = sqlite_create_query_cat(tb_publico, tb_feat, lista_janela,feat_num_lista, id, safra_ref, safra)
 ```
+
+``` python
+df_cat_sqlite_sqlite = pd.read_sql(query_final_cat_sqlite, engine)
+df_cat_sqlite_sqlite.head()
+```
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&#10;    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+&#10;    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+|     | ID  | SAFRA_REF  | FEAT_CAT1_MODA_1M | FEAT_CAT2_MODA_1M | FEAT_CAT1_MODA_3M | FEAT_CAT2_MODA_3M | FEAT_CAT1_MODA_6M | FEAT_CAT2_MODA_6M |
+|-----|-----|------------|-------------------|-------------------|-------------------|-------------------|-------------------|-------------------|
+| 0   | 4   | 2023-02-01 | B                 | C                 | B                 | C                 | B                 | C                 |
+| 1   | 5   | 2023-02-01 | B                 | B                 | B                 | B                 | B                 | B                 |
+| 2   | 6   | 2023-02-01 | A                 | A                 | A                 | A                 | A                 | A                 |
+| 3   | 7   | 2023-02-01 | C                 | B                 | C                 | B                 | C                 | B                 |
+| 4   | 10  | 2023-02-01 | A                 | B                 | A                 | B                 | A                 | B                 |
+
+</div>
 
 ``` python
 print(query_final_cat_sqlite)
@@ -678,6 +806,34 @@ print(query)
         
 
 ``` python
+df_sqlite_agregada = pd.read_sql(query, engine)
+df_sqlite_agregada.head()
+```
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&#10;    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+&#10;    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+|     | ID  | SAFRA_REF  | SUM_FEAT_NUM1_FEAT_CAT1_A_3M | MAX_FEAT_NUM1_FEAT_CAT1_A_3M | MIN_FEAT_NUM1_FEAT_CAT1_A_3M | AVG_FEAT_NUM1_FEAT_CAT1_A_3M | SUM_FEAT_NUM2_FEAT_CAT1_A_3M | MAX_FEAT_NUM2_FEAT_CAT1_A_3M | MIN_FEAT_NUM2_FEAT_CAT1_A_3M | AVG_FEAT_NUM2_FEAT_CAT1_A_3M | SUM_FEAT_NUM1_FEAT_CAT1_A_6M | MAX_FEAT_NUM1_FEAT_CAT1_A_6M | MIN_FEAT_NUM1_FEAT_CAT1_A_6M | AVG_FEAT_NUM1_FEAT_CAT1_A_6M | SUM_FEAT_NUM2_FEAT_CAT1_A_6M | MAX_FEAT_NUM2_FEAT_CAT1_A_6M | MIN_FEAT_NUM2_FEAT_CAT1_A_6M | AVG_FEAT_NUM2_FEAT_CAT1_A_6M | SUM_FEAT_NUM1_FEAT_CAT1_B_3M | MAX_FEAT_NUM1_FEAT_CAT1_B_3M | MIN_FEAT_NUM1_FEAT_CAT1_B_3M | AVG_FEAT_NUM1_FEAT_CAT1_B_3M | SUM_FEAT_NUM2_FEAT_CAT1_B_3M | MAX_FEAT_NUM2_FEAT_CAT1_B_3M | MIN_FEAT_NUM2_FEAT_CAT1_B_3M | AVG_FEAT_NUM2_FEAT_CAT1_B_3M | SUM_FEAT_NUM1_FEAT_CAT1_B_6M | MAX_FEAT_NUM1_FEAT_CAT1_B_6M | MIN_FEAT_NUM1_FEAT_CAT1_B_6M | AVG_FEAT_NUM1_FEAT_CAT1_B_6M | SUM_FEAT_NUM2_FEAT_CAT1_B_6M | MAX_FEAT_NUM2_FEAT_CAT1_B_6M | MIN_FEAT_NUM2_FEAT_CAT1_B_6M | AVG_FEAT_NUM2_FEAT_CAT1_B_6M |
+|-----|-----|------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|
+| 0   | 4   | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | -40.0                        | -40.0                        | -40.0                        | -40.0                        | 62.0                         | 62.0                         | 62.0                         | 62.0                         | -40.0                        | -40.0                        | -40.0                        | -40.0                        | 62.0                         | 62.0                         | 62.0                         | 62.0                         |
+| 1   | 5   | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | 41.0                         | 41.0                         | 41.0                         | 41.0                         | 62.0                         | 62.0                         | 62.0                         | 62.0                         | 41.0                         | 41.0                         | 41.0                         | 41.0                         | 62.0                         | 62.0                         | 62.0                         | 62.0                         |
+| 2   | 6   | 2023-02-01 | 36.0                         | 36.0                         | 36.0                         | 36.0                         | 63.0                         | 63.0                         | 63.0                         | 63.0                         | 36.0                         | 36.0                         | 36.0                         | 36.0                         | 63.0                         | 63.0                         | 63.0                         | 63.0                         | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+| 3   | 7   | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+| 4   | 10  | 2023-02-01 | 29.0                         | 29.0                         | 29.0                         | 29.0                         | -7.0                         | -7.0                         | -7.0                         | -7.0                         | 29.0                         | 29.0                         | 29.0                         | 29.0                         | -7.0                         | -7.0                         | -7.0                         | -7.0                         | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+
+</div>
+
+``` python
 tb_publico = 'tb_spine'
 lista_janela = [3, 6]
 lista_feat_num = ['FEAT_NUM1', 'FEAT_NUM2']
@@ -873,13 +1029,118 @@ print(query)
             FROM tb_join
         
 
+``` python
+df_sqlite_agregada = pd.read_sql(query, engine)
+df_sqlite_agregada.head()
+```
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&#10;    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+&#10;    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+|     | ID  | SAFRA_REF  | SUM_FEAT_NUM1_FEAT_CAT1_A_3M | MAX_FEAT_NUM1_FEAT_CAT1_A_3M | MIN_FEAT_NUM1_FEAT_CAT1_A_3M | AVG_FEAT_NUM1_FEAT_CAT1_A_3M | SUM_FEAT_NUM2_FEAT_CAT1_A_3M | MAX_FEAT_NUM2_FEAT_CAT1_A_3M | MIN_FEAT_NUM2_FEAT_CAT1_A_3M | AVG_FEAT_NUM2_FEAT_CAT1_A_3M | SUM_FEAT_NUM1_FEAT_CAT1_A_6M | MAX_FEAT_NUM1_FEAT_CAT1_A_6M | MIN_FEAT_NUM1_FEAT_CAT1_A_6M | AVG_FEAT_NUM1_FEAT_CAT1_A_6M | SUM_FEAT_NUM2_FEAT_CAT1_A_6M | MAX_FEAT_NUM2_FEAT_CAT1_A_6M | MIN_FEAT_NUM2_FEAT_CAT1_A_6M | AVG_FEAT_NUM2_FEAT_CAT1_A_6M | SUM_FEAT_NUM1_FEAT_CAT1_B_3M | MAX_FEAT_NUM1_FEAT_CAT1_B_3M | MIN_FEAT_NUM1_FEAT_CAT1_B_3M | AVG_FEAT_NUM1_FEAT_CAT1_B_3M | SUM_FEAT_NUM2_FEAT_CAT1_B_3M | MAX_FEAT_NUM2_FEAT_CAT1_B_3M | MIN_FEAT_NUM2_FEAT_CAT1_B_3M | AVG_FEAT_NUM2_FEAT_CAT1_B_3M | SUM_FEAT_NUM1_FEAT_CAT1_B_6M | MAX_FEAT_NUM1_FEAT_CAT1_B_6M | MIN_FEAT_NUM1_FEAT_CAT1_B_6M | AVG_FEAT_NUM1_FEAT_CAT1_B_6M | SUM_FEAT_NUM2_FEAT_CAT1_B_6M | MAX_FEAT_NUM2_FEAT_CAT1_B_6M | MIN_FEAT_NUM2_FEAT_CAT1_B_6M | AVG_FEAT_NUM2_FEAT_CAT1_B_6M |
+|-----|-----|------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|
+| 0   | 4   | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | -40.0                        | -40.0                        | -40.0                        | -40.0                        | 62.0                         | 62.0                         | 62.0                         | 62.0                         | -40.0                        | -40.0                        | -40.0                        | -40.0                        | 62.0                         | 62.0                         | 62.0                         | 62.0                         |
+| 1   | 5   | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | 41.0                         | 41.0                         | 41.0                         | 41.0                         | 62.0                         | 62.0                         | 62.0                         | 62.0                         | 41.0                         | 41.0                         | 41.0                         | 41.0                         | 62.0                         | 62.0                         | 62.0                         | 62.0                         |
+| 2   | 6   | 2023-02-01 | 36.0                         | 36.0                         | 36.0                         | 36.0                         | 63.0                         | 63.0                         | 63.0                         | 63.0                         | 36.0                         | 36.0                         | 36.0                         | 36.0                         | 63.0                         | 63.0                         | 63.0                         | 63.0                         | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+| 3   | 7   | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+| 4   | 10  | 2023-02-01 | 29.0                         | 29.0                         | 29.0                         | 29.0                         | -7.0                         | -7.0                         | -7.0                         | -7.0                         | 29.0                         | 29.0                         | 29.0                         | 29.0                         | -7.0                         | -7.0                         | -7.0                         | -7.0                         | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+
+</div>
+
 ## 2. MySQL
 
 ### Configurando conexão
 
+``` python
+host = "localhost"
+user = "sqluser"
+password = "password"
+database = "mydatabase"
+
+# Conectar ao MySQL
+connection = mysql.connector.connect(
+    host=host,
+    user=user,
+    password=password,
+    database=database
+)
+```
+
 ### Visão inicial do público
 
+``` python
+df_spine = pd.read_sql("SELECT * FROM tb_spine", connection)
+df_spine.head()
+```
+
+    /tmp/ipykernel_4407/661881290.py:3: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+      df_spine = pd.read_sql("SELECT * FROM tb_spine", connection)
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&#10;    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+&#10;    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+|     | ID  | SAFRA_REF  | Target |
+|-----|-----|------------|--------|
+| 0   | 4   | 2023-02-01 | 1      |
+| 1   | 5   | 2023-02-01 | 0      |
+| 2   | 6   | 2023-02-01 | 0      |
+| 3   | 7   | 2023-02-01 | 0      |
+| 4   | 10  | 2023-02-01 | 0      |
+
+</div>
+
 ### Visão inicial da tabela de variáveis
+
+``` python
+df_data = pd.read_sql("SELECT * FROM tb_feat", connection)
+df_data.head()
+```
+
+    /tmp/ipykernel_4407/1780842963.py:3: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+      df_data = pd.read_sql("SELECT * FROM tb_feat", connection)
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&#10;    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+&#10;    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+|     | ID  | SAFRA      | FEAT_NUM1 | FEAT_NUM2 | FEAT_CAT1 | FEAT_CAT2 |
+|-----|-----|------------|-----------|-----------|-----------|-----------|
+| 0   | 1   | 2023-01-01 | 73        | 23        | B         | B         |
+| 1   | 3   | 2023-01-01 | 15        | 1         | B         | B         |
+| 2   | 5   | 2023-01-01 | 75        | 71        | A         | A         |
+| 3   | 7   | 2023-01-01 | 73        | 82        | B         | C         |
+| 4   | 9   | 2023-01-01 | 61        | 8         | C         | B         |
+
+</div>
 
 ### Criação de variáveis numéricas
 
@@ -898,6 +1159,37 @@ feat_num_lista = ['FEAT_NUM1','FEAT_NUM2']
 lista_janela = [1,2,3]
 query_final_num_mysql = mysql_create_query_num(tb_publico, tb_feat, lista_janela,feat_num_lista, id, safra_ref, safra)
 ```
+
+``` python
+df_num_mysql = pd.read_sql(query_final_num_mysql, connection)
+df_num_mysql.head()
+```
+
+    /tmp/ipykernel_4407/2119439562.py:3: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+      df_num_mysql = pd.read_sql(query_final_num_mysql, connection)
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&#10;    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+&#10;    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+|     | ID  | SAFRA_REF  | FEAT_NUM1_SUM_1M | FEAT_NUM1_MIN_1M | FEAT_NUM1_MAX_1M | FEAT_NUM1_AVG_1M | FEAT_NUM2_SUM_1M | FEAT_NUM2_MIN_1M | FEAT_NUM2_MAX_1M | FEAT_NUM2_AVG_1M | FEAT_NUM1_SUM_2M | FEAT_NUM1_MIN_2M | FEAT_NUM1_MAX_2M | FEAT_NUM1_AVG_2M | FEAT_NUM2_SUM_2M | FEAT_NUM2_MIN_2M | FEAT_NUM2_MAX_2M | FEAT_NUM2_AVG_2M | FEAT_NUM1_SUM_3M | FEAT_NUM1_MIN_3M | FEAT_NUM1_MAX_3M | FEAT_NUM1_AVG_3M | FEAT_NUM2_SUM_3M | FEAT_NUM2_MIN_3M | FEAT_NUM2_MAX_3M | FEAT_NUM2_AVG_3M |
+|-----|-----|------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|------------------|
+| 0   | 4   | 2023-02-01 | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              |
+| 1   | 5   | 2023-02-01 | 75.0             | 75.0             | 75.0             | 75.0             | 71.0             | 71.0             | 71.0             | 71.0             | 75.0             | 75.0             | 75.0             | 75.0             | 71.0             | 71.0             | 71.0             | 71.0             | 75.0             | 75.0             | 75.0             | 75.0             | 71.0             | 71.0             | 71.0             | 71.0             |
+| 2   | 6   | 2023-02-01 | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              |
+| 3   | 7   | 2023-02-01 | 73.0             | 73.0             | 73.0             | 73.0             | 82.0             | 82.0             | 82.0             | 82.0             | 73.0             | 73.0             | 73.0             | 73.0             | 82.0             | 82.0             | 82.0             | 82.0             | 73.0             | 73.0             | 73.0             | 73.0             | 82.0             | 82.0             | 82.0             | 82.0             |
+| 4   | 10  | 2023-02-01 | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              | NaN              |
+
+</div>
 
 ``` python
 print(query_final_num_mysql)
@@ -1089,6 +1381,37 @@ feat_num_lista = ['FEAT_CAT1','FEAT_CAT2']
 lista_janela = [1,2,3]
 query_final_cat_mysql = mysql_create_query_cat(tb_publico, tb_feat, lista_janela, feat_num_lista, id, safra_ref, safra)
 ```
+
+``` python
+df_cat_sqlite_mysql = pd.read_sql(query_final_cat_mysql, connection)
+df_cat_sqlite_mysql.head()
+```
+
+    /tmp/ipykernel_4407/3114069227.py:3: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+      df_cat_sqlite_mysql = pd.read_sql(query_final_cat_mysql, connection)
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&#10;    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+&#10;    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+|     | ID  | SAFRA_REF  | FEAT_CAT1_MODA_1M | FEAT_CAT2_MODA_1M | FEAT_CAT1_MODA_2M | FEAT_CAT2_MODA_2M | FEAT_CAT1_MODA_3M | FEAT_CAT2_MODA_3M |
+|-----|-----|------------|-------------------|-------------------|-------------------|-------------------|-------------------|-------------------|
+| 0   | 4   | 2023-02-01 | None              | None              | None              | None              | None              | None              |
+| 1   | 5   | 2023-02-01 | A                 | A                 | A                 | A                 | A                 | A                 |
+| 2   | 6   | 2023-02-01 | None              | None              | None              | None              | None              | None              |
+| 3   | 7   | 2023-02-01 | B                 | C                 | B                 | C                 | B                 | C                 |
+| 4   | 10  | 2023-02-01 | None              | None              | None              | None              | None              | None              |
+
+</div>
 
 ``` python
 print(query_final_cat_mysql)
@@ -1596,6 +1919,37 @@ print(query)
         
 
 ``` python
+df_mysql_agregada = pd.read_sql(query, connection)
+df_mysql_agregada.head()
+```
+
+    /tmp/ipykernel_4407/724425866.py:3: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+      df_mysql_agregada = pd.read_sql(query, connection)
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&#10;    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+&#10;    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+|     | ID  | SAFRA_REF  | SUM_FEAT_NUM1_FEAT_CAT1_A_3M | MAX_FEAT_NUM1_FEAT_CAT1_A_3M | MIN_FEAT_NUM1_FEAT_CAT1_A_3M | AVG_FEAT_NUM1_FEAT_CAT1_A_3M | SUM_FEAT_NUM2_FEAT_CAT1_A_3M | MAX_FEAT_NUM2_FEAT_CAT1_A_3M | MIN_FEAT_NUM2_FEAT_CAT1_A_3M | AVG_FEAT_NUM2_FEAT_CAT1_A_3M | SUM_FEAT_NUM1_FEAT_CAT1_A_6M | MAX_FEAT_NUM1_FEAT_CAT1_A_6M | MIN_FEAT_NUM1_FEAT_CAT1_A_6M | AVG_FEAT_NUM1_FEAT_CAT1_A_6M | SUM_FEAT_NUM2_FEAT_CAT1_A_6M | MAX_FEAT_NUM2_FEAT_CAT1_A_6M | MIN_FEAT_NUM2_FEAT_CAT1_A_6M | AVG_FEAT_NUM2_FEAT_CAT1_A_6M | SUM_FEAT_NUM1_FEAT_CAT1_B_3M | MAX_FEAT_NUM1_FEAT_CAT1_B_3M | MIN_FEAT_NUM1_FEAT_CAT1_B_3M | AVG_FEAT_NUM1_FEAT_CAT1_B_3M | SUM_FEAT_NUM2_FEAT_CAT1_B_3M | MAX_FEAT_NUM2_FEAT_CAT1_B_3M | MIN_FEAT_NUM2_FEAT_CAT1_B_3M | AVG_FEAT_NUM2_FEAT_CAT1_B_3M | SUM_FEAT_NUM1_FEAT_CAT1_B_6M | MAX_FEAT_NUM1_FEAT_CAT1_B_6M | MIN_FEAT_NUM1_FEAT_CAT1_B_6M | AVG_FEAT_NUM1_FEAT_CAT1_B_6M | SUM_FEAT_NUM2_FEAT_CAT1_B_6M | MAX_FEAT_NUM2_FEAT_CAT1_B_6M | MIN_FEAT_NUM2_FEAT_CAT1_B_6M | AVG_FEAT_NUM2_FEAT_CAT1_B_6M |
+|-----|-----|------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|
+| 0   | 4   | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+| 1   | 5   | 2023-02-01 | 75.0                         | 75.0                         | 75.0                         | 75.0                         | 71.0                         | 71.0                         | 71.0                         | 71.0                         | 75.0                         | 75.0                         | 75.0                         | 75.0                         | 71.0                         | 71.0                         | 71.0                         | 71.0                         | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+| 2   | 6   | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+| 3   | 7   | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | 73.0                         | 73.0                         | 73.0                         | 73.0                         | 82.0                         | 82.0                         | 82.0                         | 82.0                         | 73.0                         | 73.0                         | 73.0                         | 73.0                         | 82.0                         | 82.0                         | 82.0                         | 82.0                         |
+| 4   | 10  | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+
+</div>
+
+``` python
 tb_publico = 'tb_spine'
 lista_janela = [3, 6]
 lista_feat_num = ['FEAT_NUM1', 'FEAT_NUM2']
@@ -1831,6 +2185,37 @@ print(query)
                 tb_join.AVG_FEAT_NUM2_FEAT_CAT2_C_6M
             FROM tb_join
         
+
+``` python
+df_mysql_agregada = pd.read_sql(query, connection)
+df_mysql_agregada.head()
+```
+
+    /tmp/ipykernel_4407/724425866.py:3: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+      df_mysql_agregada = pd.read_sql(query, connection)
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&#10;    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+&#10;    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+|     | ID  | SAFRA_REF  | SUM_FEAT_NUM1_FEAT_CAT2_B_3M | MAX_FEAT_NUM1_FEAT_CAT2_B_3M | MIN_FEAT_NUM1_FEAT_CAT2_B_3M | AVG_FEAT_NUM1_FEAT_CAT2_B_3M | SUM_FEAT_NUM2_FEAT_CAT2_B_3M | MAX_FEAT_NUM2_FEAT_CAT2_B_3M | MIN_FEAT_NUM2_FEAT_CAT2_B_3M | AVG_FEAT_NUM2_FEAT_CAT2_B_3M | SUM_FEAT_NUM1_FEAT_CAT2_B_6M | MAX_FEAT_NUM1_FEAT_CAT2_B_6M | MIN_FEAT_NUM1_FEAT_CAT2_B_6M | AVG_FEAT_NUM1_FEAT_CAT2_B_6M | SUM_FEAT_NUM2_FEAT_CAT2_B_6M | MAX_FEAT_NUM2_FEAT_CAT2_B_6M | MIN_FEAT_NUM2_FEAT_CAT2_B_6M | AVG_FEAT_NUM2_FEAT_CAT2_B_6M | SUM_FEAT_NUM1_FEAT_CAT2_C_3M | MAX_FEAT_NUM1_FEAT_CAT2_C_3M | MIN_FEAT_NUM1_FEAT_CAT2_C_3M | AVG_FEAT_NUM1_FEAT_CAT2_C_3M | SUM_FEAT_NUM2_FEAT_CAT2_C_3M | MAX_FEAT_NUM2_FEAT_CAT2_C_3M | MIN_FEAT_NUM2_FEAT_CAT2_C_3M | AVG_FEAT_NUM2_FEAT_CAT2_C_3M | SUM_FEAT_NUM1_FEAT_CAT2_C_6M | MAX_FEAT_NUM1_FEAT_CAT2_C_6M | MIN_FEAT_NUM1_FEAT_CAT2_C_6M | AVG_FEAT_NUM1_FEAT_CAT2_C_6M | SUM_FEAT_NUM2_FEAT_CAT2_C_6M | MAX_FEAT_NUM2_FEAT_CAT2_C_6M | MIN_FEAT_NUM2_FEAT_CAT2_C_6M | AVG_FEAT_NUM2_FEAT_CAT2_C_6M |
+|-----|-----|------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|------------------------------|
+| 0   | 4   | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+| 1   | 5   | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+| 2   | 6   | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+| 3   | 7   | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | 73.0                         | 73.0                         | 73.0                         | 73.0                         | 82.0                         | 82.0                         | 82.0                         | 82.0                         | 73.0                         | 73.0                         | 73.0                         | 73.0                         | 82.0                         | 82.0                         | 82.0                         | 82.0                         |
+| 4   | 10  | 2023-02-01 | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          | NaN                          |
+
+</div>
 
 ## 3. Snowflake
 
