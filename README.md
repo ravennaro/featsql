@@ -12,8 +12,14 @@ from featsql.featsnow import *
 
 ``` python
 import pandas as pd
-from sqlalchemy import create_engine
+```
+
+``` python
 import mysql.connector
+```
+
+``` python
+from sqlalchemy import create_engine
 ```
 
 ``` python
@@ -1083,7 +1089,7 @@ df_spine = pd.read_sql("SELECT * FROM tb_spine", connection)
 df_spine.head()
 ```
 
-    /tmp/ipykernel_4407/1457666827.py:2: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+    /tmp/ipykernel_4407/111523407.py:1: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
       df_spine = pd.read_sql("SELECT * FROM tb_spine", connection)
 
 <div>
@@ -1116,7 +1122,7 @@ df_data = pd.read_sql("SELECT * FROM tb_feat", connection)
 df_data.head()
 ```
 
-    /tmp/ipykernel_4407/2401477500.py:2: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+    /tmp/ipykernel_4407/3264721981.py:1: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
       df_data = pd.read_sql("SELECT * FROM tb_feat", connection)
 
 <div>
@@ -1165,7 +1171,7 @@ df_num_mysql = pd.read_sql(query_final_num_mysql, connection)
 df_num_mysql.head()
 ```
 
-    /tmp/ipykernel_4407/4045549687.py:2: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+    /tmp/ipykernel_4407/2716920317.py:1: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
       df_num_mysql = pd.read_sql(query_final_num_mysql, connection)
 
 <div>
@@ -1387,7 +1393,7 @@ df_cat_sqlite_mysql = pd.read_sql(query_final_cat_mysql, connection)
 df_cat_sqlite_mysql.head()
 ```
 
-    /tmp/ipykernel_4407/3384917413.py:2: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+    /tmp/ipykernel_4407/3838398265.py:1: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
       df_cat_sqlite_mysql = pd.read_sql(query_final_cat_mysql, connection)
 
 <div>
@@ -1923,7 +1929,7 @@ df_mysql_agregada = pd.read_sql(query, connection)
 df_mysql_agregada.head()
 ```
 
-    /tmp/ipykernel_4407/696495608.py:2: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+    /tmp/ipykernel_4407/4123804764.py:1: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
       df_mysql_agregada = pd.read_sql(query, connection)
 
 <div>
@@ -2191,7 +2197,7 @@ df_mysql_agregada = pd.read_sql(query, connection)
 df_mysql_agregada.head()
 ```
 
-    /tmp/ipykernel_4407/696495608.py:2: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+    /tmp/ipykernel_4407/4123804764.py:1: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
       df_mysql_agregada = pd.read_sql(query, connection)
 
 <div>
