@@ -70,9 +70,44 @@ def snow_query_join_num(lista_janela, id, safra_ref):
     return query_join
 
 # %% ../nbs/03_creation_snowflake.ipynb 6
-def snow_create_query_num(tb_publico, tb_feat, lista_janela, feat_num_lista, id, safra_ref, safra):
+def snow_create_query_num(tb_publico, # public table: contains the public, target and reference date
+                            tb_feat, # feature table: table with columns that will be transformed into features
+                            lista_janela, # time window list
+                            feat_num_lista, # list of columns that will be transform into features  
+                            id, # id column name
+                            safra_ref, # reference date column name on public table
+                            safra, # date column name on feature table
+                            nome_arquivo=None, # name of the .sql file where the query is saved
+                            status=False, # if True, it creates a table on database
+                            table_name=None, # table name created
+                            conn=None # Database connection 
+                            ): 
+    if status:
+        # Apagando tabela se existir do banco de dados:
+        cursor = conn.cursor()
+        query_drop_table = f"""
+-- Apaga tabela com o nome {table_name}
+DROP TABLE IF EXISTS {table_name};
+"""        
+        # Executando query para apagar tabela se existir
+        cursor.execute(query_drop_table)
+
+        # Query de construção de tabela 
+        query_create_table = f"""
+-- Criar a tabela {table_name}
+CREATE TABLE {table_name} AS
+"""
+      
+    else:
+        # Quando satus=False, a função não cria a tabela
+        query_drop_table=""
+        query_create_table=""
+
+
     query_janela, lista_vars_join, lista_vars_janelas = snow_query_janela_num(lista_janela, feat_num_lista, id, safra_ref, tb_feat, safra)
     query_num = f"""
+    {query_create_table}
+
     WITH 
     tb_public AS (
         SELECT 
@@ -96,6 +131,20 @@ def snow_create_query_num(tb_publico, tb_feat, lista_janela, feat_num_lista, id,
         {lista_vars_join}
     FROM tb_join
     """
+
+    if status:
+        # Executando query de criação da tabela
+        cursor.execute(query_num)
+        cursor.close()
+        
+    # Salvando arquivo em file .sql:
+    try: 
+        with open(nome_arquivo, 'w') as arquivo:
+            arquivo.write(query_drop_table)
+            arquivo.write(query_num)
+        print(f'Complete query creation with {nome_arquivo} saved file')
+    except:
+        print("Complete query creation with no saved file.")
     return query_num
 
 # %% ../nbs/03_creation_snowflake.ipynb 8
@@ -142,10 +191,44 @@ def snow_query_janela_cat(lista_janela, feat_cat_lista, id, safra_ref, tb_feat, 
     return query_janela_cat, vars_cat, query_join
 
 # %% ../nbs/03_creation_snowflake.ipynb 9
-def snow_create_query_cat(tb_publico, tb_feat, lista_janela, feat_cat_lista, id, safra_ref, safra):
+def snow_create_query_cat(tb_publico, # public table: contains the public, target and reference date
+                            tb_feat, # feature table: table with columns that will be transformed into features
+                            lista_janela, # time window list
+                            feat_cat_lista, # list of columns that will be transform into features  
+                            id, # id column name
+                            safra_ref, # reference date column name on public table
+                            safra, # date column name on feature table
+                            nome_arquivo=None, # name of the .sql file where the query is saved
+                            status=False, # if True, it creates a table on database
+                            table_name=None, # table name created
+                            conn=None # Database connection 
+                            ):
+    if status:
+        # Apagando tabela se existir do banco de dados:
+        cursor = conn.cursor()
+        query_drop_table = f"""
+-- Apaga tabela com o nome {table_name}
+DROP TABLE IF EXISTS {table_name};
+"""        
+        # Executando query para apagar tabela se existir
+        cursor.execute(query_drop_table)
+
+        # Query de construção de tabela 
+        query_create_table = f"""
+-- Criar a tabela {table_name}
+CREATE TABLE {table_name} AS
+"""
+      
+    else:
+        # Quando satus=False, a função não cria a tabela
+        query_drop_table=""
+        query_create_table=""
     query_janela_cat, lista_vars, query_join = snow_query_janela_cat(lista_janela, feat_cat_lista, id, safra_ref, tb_feat, safra)
 
+
+
     query_num_cat = f"""
+    {query_create_table}
     WITH 
     tb_public AS (
         SELECT 
@@ -163,6 +246,20 @@ def snow_create_query_cat(tb_publico, tb_feat, lista_janela, feat_cat_lista, id,
     FROM tb_public
     {query_join}
     """
+    if status:
+        # Executando query de criação da tabela
+        cursor.execute(query_num_cat)
+        cursor.close()
+        
+    # Salvando arquivo em file .sql:
+    try: 
+        with open(nome_arquivo, 'w') as arquivo:
+            arquivo.write(query_drop_table)
+            arquivo.write(query_num_cat)
+        print(f'Complete query creation with {nome_arquivo} saved file')
+    except:
+        print("Complete query creation with no saved file.")
+        
     return query_num_cat
 
 # %% ../nbs/03_creation_snowflake.ipynb 11
@@ -212,13 +309,48 @@ tb_agrupada_{feat_cat}_{feat_cat_valor}_{janela}M as(
     return query, table_name, vars
 
 # %% ../nbs/03_creation_snowflake.ipynb 12
-def snow_create_query_agregada(tb_publico, tb_feat, janelas, lista_feat_num, id, safra_ref, safra, feat_cat, lista_valor_agragador):
+def snow_create_query_agregada(tb_publico, # public table: contains the public, target and reference date
+                                 tb_feat, # feature table: table with columns that will be transformed into features
+                                 lista_janela, # time window list
+                                 lista_feat_num, # list of numerical columns
+                                 id, # id column name 
+                                 safra_ref, # reference date column name on public table
+                                 safra, # date column name on feature table
+                                 feat_cat, # categorical column that will be aggregated
+                                 lista_valor_agragador, # list of feat_cat values that will be aggregated into features
+                                 nome_arquivo=None, # name of the .sql file where the query is saved
+                                 status=False, # if True, it creates a table on database
+                                 table_name=None, # table name created
+                                 conn=None # Database connection 
+                                 ):
+    if status:
+        # Apagando tabela se existir do banco de dados:
+        cursor = conn.cursor()
+        query_drop_table = f"""
+-- Apaga tabela com o nome {table_name}
+DROP TABLE IF EXISTS {table_name};
+"""        
+        # Executando query para apagar tabela se existir
+        cursor.execute(query_drop_table)
+
+        # Query de construção de tabela 
+        query_create_table = f"""
+-- Criar a tabela {table_name}
+CREATE TABLE {table_name} AS
+"""    
+    else:
+        # Quando satus=False, a função não cria a tabela
+        query_drop_table=""
+        query_create_table=""
+
+
     query_join=""
     lista_vars=""
     query_vars=""
 
 
     query_vars=f"""
+{query_create_table}
 WITH
 tb_public as(
     SELECT
@@ -229,7 +361,7 @@ tb_public as(
 """    
     for feat_cat_valor in lista_valor_agragador:
 
-        for n in janelas:
+        for n in lista_janela:
             query_agragada, table_name, variaveis = snow_query_agregada(n, lista_feat_num, feat_cat, feat_cat_valor, id, safra_ref, tb_feat, safra)
             query_vars+=f"""
             {query_agragada}
@@ -257,4 +389,18 @@ tb_public as(
     {query_join}
 
     """
+    if status:
+        # Executando query de criação da tabela
+        cursor.execute(query_vars)
+        cursor.close()
+        
+    # Salvando arquivo em file .sql:
+    try: 
+        with open(nome_arquivo, 'w') as arquivo:
+            arquivo.write(query_drop_table)
+            arquivo.write(query_vars)
+        print(f'Complete query creation with {nome_arquivo} saved file')
+    except:
+        print("Complete query creation with no saved file.")
+
     return query_vars
