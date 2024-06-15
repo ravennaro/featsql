@@ -77,7 +77,7 @@ pd.set_option('display.max_columns', None)
 ### Configurando a engine
 
 ``` python
-url_db = "mydatabase.db" 
+url_db = "../../data/mydatabase.db" 
 conn = sqlite3.connect(url_db)
 cursor = conn.cursor()
 ```
