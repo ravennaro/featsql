@@ -9,6 +9,7 @@ tb_public as(
 ),
 
             
+-- Creation of grouped variables with 1M window
 -- Criação de variáveis agrupadas com janela de 1M
 tb_agrupada_FEAT_CAT1_B_1M as(
     SELECT
@@ -39,6 +40,7 @@ tb_agrupada_FEAT_CAT1_B_1M as(
 
         
             
+-- Creation of grouped variables with 2M window
 -- Criação de variáveis agrupadas com janela de 2M
 tb_agrupada_FEAT_CAT1_B_2M as(
     SELECT
@@ -69,6 +71,7 @@ tb_agrupada_FEAT_CAT1_B_2M as(
 
         
             
+-- Creation of grouped variables with 3M window
 -- Criação de variáveis agrupadas com janela de 3M
 tb_agrupada_FEAT_CAT1_B_3M as(
     SELECT
@@ -99,6 +102,7 @@ tb_agrupada_FEAT_CAT1_B_3M as(
 
         
             
+-- Creation of grouped variables with 1M window
 -- Criação de variáveis agrupadas com janela de 1M
 tb_agrupada_FEAT_CAT1_C_1M as(
     SELECT
@@ -129,6 +133,7 @@ tb_agrupada_FEAT_CAT1_C_1M as(
 
         
             
+-- Creation of grouped variables with 2M window
 -- Criação de variáveis agrupadas com janela de 2M
 tb_agrupada_FEAT_CAT1_C_2M as(
     SELECT
@@ -159,6 +164,7 @@ tb_agrupada_FEAT_CAT1_C_2M as(
 
         
             
+-- Creation of grouped variables with 3M window
 -- Criação de variáveis agrupadas com janela de 3M
 tb_agrupada_FEAT_CAT1_C_3M as(
     SELECT

@@ -5,16 +5,17 @@ __all__ = ['mysql_query_janela_num', 'mysql_query_join_num', 'mysql_create_query
            'mysql_create_query_cat', 'mysql_query_agregada', 'mysql_query_join_agregada', 'mysql_create_query_agregada']
 
 # %% ../nbs/02_creation_mysql.ipynb 4
-def mysql_query_janela_num(lista_janela, feat_num_lista, id, safra_ref, tb_feat, safra):
+def mysql_query_janela_num(list_window, feat_num_lista, id, safra_ref, tb_feat, safra):
     query_janela = ""
     lista_vars_join = ""
     lista_vars_janelas = ""
 
-    for n in lista_janela:
+    for n in list_window:
         query_variaveis_numericas = ""
         for i in feat_num_lista:
             query_variaveis_numericas += f"""
-             -- Criação de variáveis numéricas a partir da coluna {i} para a janela {n}
+             -- Creation of numerical variables from column {i} for window {n}
+             -- Criação de variáveis numéricas a partir da coluna {i} para a janela {n} 
             SUM(IFNULL({tb_feat}.{i},0)) AS {i}_SUM_{n}M,
             MIN(IFNULL({tb_feat}.{i},0)) AS {i}_MIN_{n}M,
             MAX(IFNULL({tb_feat}.{i},0)) AS {i}_MAX_{n}M,
@@ -35,6 +36,7 @@ def mysql_query_janela_num(lista_janela, feat_num_lista, id, safra_ref, tb_feat,
         query_variaveis_numericas = query_variaveis_numericas.rstrip(', \n')
 
         query_janela += f"""
+        -- Creation of {n}M window variables
         -- Criação de variáveis de janela de {n}M
         tb_janela_{n}M AS (
             SELECT 
@@ -56,9 +58,9 @@ def mysql_query_janela_num(lista_janela, feat_num_lista, id, safra_ref, tb_feat,
 
 
 # %% ../nbs/02_creation_mysql.ipynb 5
-def mysql_query_join_num(lista_janela, id, safra_ref):
+def mysql_query_join_num(list_window, id, safra_ref):
     query_join = ""
-    for i in lista_janela:
+    for i in list_window:
         query_join += f"""
         LEFT JOIN tb_janela_{i}M
             ON tb_public.{id} = tb_janela_{i}M.{id}
@@ -69,12 +71,12 @@ def mysql_query_join_num(lista_janela, id, safra_ref):
 # %% ../nbs/02_creation_mysql.ipynb 6
 def mysql_create_query_num(tb_publico, # public table: contains the public, target and reference date
                             tb_feat, # feature table: table with columns that will be transformed into features
-                            lista_janela, # time window list
+                            list_window, # time window list
                             feat_num_lista, # list of columns that will be transform into features  
                             id, # id column name
                             safra_ref, # reference date column name on public table
                             safra, # date column name on feature table
-                            nome_arquivo=None, # name of the .sql file where the query is saved
+                            file_name=None, # name of the .sql file where the query is saved
                             status=False, # if True, it creates a table on database
                             table_name=None, # table name created
                             conn=None # Database connection 
@@ -83,6 +85,7 @@ def mysql_create_query_num(tb_publico, # public table: contains the public, targ
         # Apagando tabela se existir do banco de dados:
         cursor = conn.cursor()
         query_drop_table = f"""
+-- Delete table with the name {table_name}        
 -- Apaga tabela com o nome {table_name}
 DROP TABLE IF EXISTS {table_name};
 """        
@@ -91,6 +94,7 @@ DROP TABLE IF EXISTS {table_name};
 
         # Query de construção de tabela 
         query_create_table = f"""
+-- Create table with the name {table_name}
 -- Criar a tabela {table_name}
 CREATE TABLE {table_name} AS
 """
@@ -100,7 +104,7 @@ CREATE TABLE {table_name} AS
         query_drop_table=""
         query_create_table=""
 
-    query_janela, lista_vars_join, lista_vars_janelas = mysql_query_janela_num(lista_janela, feat_num_lista, id, safra_ref, tb_feat, safra)
+    query_janela, lista_vars_join, lista_vars_janelas = mysql_query_janela_num(list_window, feat_num_lista, id, safra_ref, tb_feat, safra)
     query_num = f"""
     {query_create_table}
     WITH 
@@ -117,7 +121,7 @@ CREATE TABLE {table_name} AS
             {lista_vars_janelas}
 
         FROM tb_public 
-        {mysql_query_join_num(lista_janela, id, safra_ref)}
+        {mysql_query_join_num(list_window, id, safra_ref)}
     )
         
     SELECT 
@@ -133,20 +137,20 @@ CREATE TABLE {table_name} AS
         
     # Salvando arquivo em file .sql:
     try: 
-        with open(nome_arquivo, 'w') as arquivo:
+        with open(file_name, 'w') as arquivo:
             arquivo.write(query_drop_table)
             arquivo.write(query_num)
-        print(f'Complete query creation with {nome_arquivo} saved file')
+        print(f'Complete query creation with {file_name} saved file')
     except:
         print("Complete query creation with no saved file.")
     return query_num
 
 # %% ../nbs/02_creation_mysql.ipynb 8
-def mysql_query_janela_cat(lista_janela, feat_cat_lista, id, safra_ref, tb_feat, safra):
+def mysql_query_janela_cat(list_window, feat_cat_lista, id, safra_ref, tb_feat, safra):
     vars_cat = ""
     query_janela_cat = ""
     join_moda = ""
-    for n in lista_janela:
+    for n in list_window:
         for i in feat_cat_lista:
             query_janela_cat += f"""
     tb_janela_{i}_{n}M AS (
@@ -199,12 +203,12 @@ def mysql_query_janela_cat(lista_janela, feat_cat_lista, id, safra_ref, tb_feat,
 # %% ../nbs/02_creation_mysql.ipynb 9
 def mysql_create_query_cat(tb_publico, # public table: contains the public, target and reference date
                             tb_feat, # feature table: table with columns that will be transformed into features
-                            lista_janela, # time window list
+                            list_window, # time window list
                             feat_cat_lista, # list of columns that will be transform into features  
                             id, # id column name
                             safra_ref, # reference date column name on public table
                             safra, # date column name on feature table
-                            nome_arquivo=None, # name of the .sql file where the query is saved
+                            file_name=None, # name of the .sql file where the query is saved
                             status=False, # if True, it creates a table on database
                             table_name=None, # table name created
                             conn=None # Database connection 
@@ -215,6 +219,7 @@ def mysql_create_query_cat(tb_publico, # public table: contains the public, targ
         # Apagando tabela se existir do banco de dados:
         cursor = conn.cursor()
         query_drop_table = f"""
+-- Delete table with the name {table_name}
 -- Apaga tabela com o nome {table_name}
 DROP TABLE IF EXISTS {table_name};
 """        
@@ -223,6 +228,7 @@ DROP TABLE IF EXISTS {table_name};
 
         # Query de construção de tabela 
         query_create_table = f"""
+-- Create table with the name {table_name}
 -- Criar a tabela {table_name}
 CREATE TABLE {table_name} AS
 """
@@ -232,7 +238,7 @@ CREATE TABLE {table_name} AS
         query_drop_table=""
         query_create_table=""
 
-    query_janela_cat, lista_vars, join_moda  = mysql_query_janela_cat(lista_janela, feat_cat_lista, id, safra_ref, tb_feat, safra)
+    query_janela_cat, lista_vars, join_moda  = mysql_query_janela_cat(list_window, feat_cat_lista, id, safra_ref, tb_feat, safra)
 
     query_num_cat = f"""
     {query_create_table}
@@ -260,10 +266,10 @@ CREATE TABLE {table_name} AS
         
     # Salvando arquivo em file .sql:
     try: 
-        with open(nome_arquivo, 'w') as arquivo:
+        with open(file_name, 'w') as arquivo:
             arquivo.write(query_drop_table)
             arquivo.write(query_num_cat)
-        print(f'Complete query creation with {nome_arquivo} saved file')
+        print(f'Complete query creation with {file_name} saved file')
     except:
         print("Complete query creation with no saved file.")
 
@@ -274,6 +280,8 @@ def mysql_query_agregada(janela, lista_feat_num, feat_cat, feat_cat_valor, id, s
     lista_vars=""
     lista_vars_janelas=""  
     query= f"""
+    -- Creation of grouped variables with {janela}M window
+    -- Criação de variáveis agrupadas com janela de {janela}M
     tb_agrupada_{feat_cat}_{feat_cat_valor}_{janela}M as(
         SELECT
             tb_public.{id},
@@ -312,9 +320,9 @@ def mysql_query_agregada(janela, lista_feat_num, feat_cat, feat_cat_valor, id, s
     return query, lista_vars, lista_vars_janelas
 
 # %% ../nbs/02_creation_mysql.ipynb 12
-def mysql_query_join_agregada(janelas, feat_cat, lista_valor_agragador, id, safra_ref):
+def mysql_query_join_agregada(janelas, feat_cat, list_aggregator_value, id, safra_ref):
     query_join= ""
-    for feat_cat_valor in lista_valor_agragador:
+    for feat_cat_valor in list_aggregator_value:
         for i in janelas:
             query_join += f"""
         LEFT JOIN tb_agrupada_{feat_cat}_{feat_cat_valor}_{i}M
@@ -326,14 +334,14 @@ def mysql_query_join_agregada(janelas, feat_cat, lista_valor_agragador, id, safr
 # %% ../nbs/02_creation_mysql.ipynb 13
 def mysql_create_query_agregada(tb_publico, # public table: contains the public, target and reference date
                                  tb_feat, # feature table: table with columns that will be transformed into features
-                                 lista_janela, # time window list
+                                 list_window, # time window list
                                  lista_feat_num, # list of numerical columns
                                  id, # id column name 
                                  safra_ref, # reference date column name on public table
                                  safra, # date column name on feature table
                                  feat_cat, # categorical column that will be aggregated
-                                 lista_valor_agragador, # list of feat_cat values that will be aggregated into features
-                                 nome_arquivo=None, # name of the .sql file where the query is saved
+                                 list_aggregator_value, # list of feat_cat values that will be aggregated into features
+                                 file_name=None, # name of the .sql file where the query is saved
                                  status=False, # if True, it creates a table on database
                                  table_name=None, # table name created
                                  conn=None # Database connection 
@@ -342,6 +350,7 @@ def mysql_create_query_agregada(tb_publico, # public table: contains the public,
         # Apagando tabela se existir do banco de dados:
         cursor = conn.cursor()
         query_drop_table = f"""
+-- Delete table with the name {table_name} 
 -- Apaga tabela com o nome {table_name}
 DROP TABLE IF EXISTS {table_name};
 """        
@@ -350,6 +359,7 @@ DROP TABLE IF EXISTS {table_name};
 
         # Query de construção de tabela 
         query_create_table = f"""
+-- Create table with the name {table_name}
 -- Criar a tabela {table_name}
 CREATE TABLE {table_name} AS
 """    
@@ -371,8 +381,8 @@ CREATE TABLE {table_name} AS
     """    
     lista_vars_janelas=""
     lista_vars_janelas_join=""
-    for feat_cat_valor in lista_valor_agragador:
-        for n in lista_janela:
+    for feat_cat_valor in list_aggregator_value:
+        for n in list_window:
             query_agragada, lista_vars_jan_join, lista_vars_jan = mysql_query_agregada(n, lista_feat_num, feat_cat, feat_cat_valor, id, safra_ref, tb_feat, safra)
             query+=f"""
             {query_agragada}
@@ -388,7 +398,7 @@ CREATE TABLE {table_name} AS
             tb_public.{safra_ref},
                     {lista_vars_janelas}   
         FROM tb_public 
-                {mysql_query_join_agregada(lista_janela, feat_cat, lista_valor_agragador, id, safra_ref)}
+                {mysql_query_join_agregada(list_window, feat_cat, list_aggregator_value, id, safra_ref)}
             )
 
         SELECT 
@@ -405,10 +415,10 @@ CREATE TABLE {table_name} AS
         
     # Salvando arquivo em file .sql:
     try: 
-        with open(nome_arquivo, 'w') as arquivo:
+        with open(file_name, 'w') as arquivo:
             arquivo.write(query_drop_table)
             arquivo.write(query)
-        print(f'Complete query creation with {nome_arquivo} saved file')
+        print(f'Complete query creation with {file_name} saved file')
     except:
         print("Complete query creation with no saved file.")
     return query

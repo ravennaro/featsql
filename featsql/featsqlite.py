@@ -6,16 +6,17 @@ __all__ = ['sqlite_query_janela_num', 'sqlite_query_join_num', 'sqlite_create_qu
            'sqlite_create_query_agregada']
 
 # %% ../nbs/01_creation_sqlite.ipynb 4
-def sqlite_query_janela_num(lista_janela, feat_num_lista, id, safra_ref, tb_feat, safra, status):
+def sqlite_query_janela_num(list_window, feat_num_lista, id, safra_ref, tb_feat, safra, status):
     query_janela = ""
     lista_vars = ""
     lista_vars_create = ""
     lista_vars_create_float=""
         
-    for n in lista_janela:
+    for n in list_window:
         query_variaveis_numericas=""
         for i in feat_num_lista:
             query_variaveis_numericas +=f"""
+             -- Creation of numerical variables from column {i} for window {n}
              -- Criação de variáveis numéricas a partir da coluna {i} para a janela {n}
             SUM(COALESCE({tb_feat}.{i},0)) AS {i}_SUM_{n}M,
             MIN(COALESCE({tb_feat}.{i},0)) AS {i}_MIN_{n}M,
@@ -39,6 +40,7 @@ def sqlite_query_janela_num(lista_janela, feat_num_lista, id, safra_ref, tb_feat
         query_variaveis_numericas = query_variaveis_numericas.rstrip(', \n')
 
         query_janela += f"""
+        -- Creation of {n}M window variables
         -- Criação de variáveis de janela de {n}M
         tb_janela_{n}M as(
             SELECT 
@@ -61,9 +63,9 @@ def sqlite_query_janela_num(lista_janela, feat_num_lista, id, safra_ref, tb_feat
     return query_janela, lista_vars, lista_vars_create, lista_vars_create_float
 
 # %% ../nbs/01_creation_sqlite.ipynb 5
-def sqlite_query_join_num(lista_janela, id, safra_ref):
+def sqlite_query_join_num(list_window, id, safra_ref):
     query_join= ""
-    for i in lista_janela:
+    for i in list_window:
         query_join += f"""
         LEFT JOIN tb_janela_{i}M
             ON tb_public.{id} = tb_janela_{i}M.{id}
@@ -74,23 +76,24 @@ def sqlite_query_join_num(lista_janela, id, safra_ref):
 # %% ../nbs/01_creation_sqlite.ipynb 6
 def sqlite_create_query_num(tb_publico, # public table: contains the public, target and reference date
                             tb_feat, # feature table: table with columns that will be transformed into features
-                            lista_janela, # time window list
+                            list_window, # time window list
                             feat_num_lista, # list of columns that will be transform into features  
                             id, # id column name
                             safra_ref, # reference date column name on public table
                             safra, # date column name on feature table
-                            nome_arquivo=None, # name of the .sql file where the query is saved
+                            file_name=None, # name of the .sql file where the query is saved
                             status=False, # if True, it creates a table on database
                             table_name=None, # table name created
                             conn=None # Database connection 
                             ): 
 
-    query_janela, lista_var, lista_vars_create, lista_vars_create_float = sqlite_query_janela_num(lista_janela, feat_num_lista, id, safra_ref, tb_feat, safra, status)
+    query_janela, lista_var, lista_vars_create, lista_vars_create_float = sqlite_query_janela_num(list_window, feat_num_lista, id, safra_ref, tb_feat, safra, status)
     
     if status:
         # Apagando tabela se existir do banco de dados:
         cursor = conn.cursor()
         query_drop_table = f"""
+-- Delete table with the name {table_name}
 -- Apaga tabela com o nome {table_name}
 DROP TABLE IF EXISTS {table_name};
 """        
@@ -99,6 +102,7 @@ DROP TABLE IF EXISTS {table_name};
 
         # Query de construção de tabela 
         query_create_table = f"""
+-- Create table with the name {table_name}
 -- Criar a tabela {table_name}
 CREATE TABLE {table_name} (
     {id} TEXT,
@@ -131,7 +135,7 @@ INSERT INTO {table_name} ({id}, {safra_ref}, {lista_vars_create})
         SELECT 
             *
         FROM tb_public 
-        {sqlite_query_join_num(lista_janela, id, safra_ref)}
+        {sqlite_query_join_num(list_window, id, safra_ref)}
     )
     {query_insert_table}
     SELECT 
@@ -147,22 +151,22 @@ INSERT INTO {table_name} ({id}, {safra_ref}, {lista_vars_create})
   
     # Salvando arquivo em file .sql:
     try: 
-        with open(nome_arquivo, 'w') as arquivo:
+        with open(file_name, 'w') as arquivo:
             arquivo.write(query_drop_table)
             arquivo.write(query_num)
-        print(f'Complete query creation with {nome_arquivo} saved file')
+        print(f'Complete query creation with {file_name} saved file')
     except:
         print("Complete query creation with no saved file.")
     return query_num
 
 # %% ../nbs/01_creation_sqlite.ipynb 8
-def sqlite_query_janela_cat(lista_janela, feat_cat_lista, id, safra_ref, tb_feat, safra, status):
+def sqlite_query_janela_cat(list_window, feat_cat_lista, id, safra_ref, tb_feat, safra, status):
     lista_vars_create = ""
     lista_vars_create_cat=""
     vars_cat = ""
     query_janela_cat = ""
     join_moda = ""
-    for n in lista_janela:
+    for n in list_window:
         for i in feat_cat_lista:
             query_janela_cat += f"""
     tb_janela_{i}_{n}M as(
@@ -223,23 +227,24 @@ def sqlite_query_janela_cat(lista_janela, feat_cat_lista, id, safra_ref, tb_feat
 # %% ../nbs/01_creation_sqlite.ipynb 9
 def sqlite_create_query_cat(tb_publico, # public table: contains the public, target and reference date
                             tb_feat, # feature table: table with columns that will be transformed into features
-                            lista_janela, # time window list
+                            list_window, # time window list
                             feat_cat_lista, # list of columns that will be transform into features  
                             id, # id column name
                             safra_ref, # reference date column name on public table
                             safra, # date column name on feature table
-                            nome_arquivo=None, # name of the .sql file where the query is saved
+                            file_name=None, # name of the .sql file where the query is saved
                             status=False, # if True, it creates a table on database
                             table_name=None, # table name created
                             conn=None # Database connection 
                             ):
     
-    query_janela_cat, lista_vars, join_moda, lista_vars_create, lista_vars_create_cat  = sqlite_query_janela_cat(lista_janela, feat_cat_lista, id, safra_ref, tb_feat, safra, status)
+    query_janela_cat, lista_vars, join_moda, lista_vars_create, lista_vars_create_cat  = sqlite_query_janela_cat(list_window, feat_cat_lista, id, safra_ref, tb_feat, safra, status)
     
     if status:
         # Apagando tabela se existir do banco de dados:
         cursor = conn.cursor()
         query_drop_table = f"""
+-- Delete table with the name {table_name}
 -- Apaga tabela com o nome {table_name}
 DROP TABLE IF EXISTS {table_name};
 """        
@@ -248,6 +253,7 @@ DROP TABLE IF EXISTS {table_name};
 
         # Query de construção de tabela 
         query_create_table = f"""
+-- Create table with the name {table_name}
 -- Criar a tabela {table_name}
 CREATE TABLE {table_name} (
     {id} TEXT,
@@ -290,25 +296,27 @@ INSERT INTO {table_name} ({id}, {safra_ref}, {lista_vars_create})
   
     # Salvando arquivo em file .sql:
     try: 
-        with open(nome_arquivo, 'w') as arquivo:
+        with open(file_name, 'w') as arquivo:
             arquivo.write(query_drop_table)
             arquivo.write(query_num_cat)
-        print(f'Complete query creation with {nome_arquivo} saved file')
+        print(f'Complete query creation with {file_name} saved file')
     except:
         print("Complete query creation with no saved file.")
     return query_num_cat
 
 # %% ../nbs/01_creation_sqlite.ipynb 11
-def sqlite_query_agregada(lista_janela, lista_feat_num, feat_cat, lista_valor_agragador, id, safra_ref, tb_feat, safra, status):  
+def sqlite_query_agregada(list_window, lista_feat_num, feat_cat, list_aggregator_value, id, safra_ref, tb_feat, safra, status):  
     lista_vars_create=""
     lista_vars_create_float=""
     query=""
     lista_vars= "" 
     
-    for feat_cat_valor in lista_valor_agragador:
-        for janela in lista_janela:
+    for feat_cat_valor in list_aggregator_value:
+        for janela in list_window:
 
             query += f"""
+            -- Creation of grouped variables with {janela}M window
+            -- Criação de variáveis agrupadas com janela de {janela}M
             tb_agrupada_{feat_cat}_{feat_cat_valor}_{janela}M as(
                 SELECT
                     tb_public.{id},
@@ -356,9 +364,9 @@ def sqlite_query_agregada(lista_janela, lista_feat_num, feat_cat, lista_valor_ag
     return query, lista_vars, lista_vars_create, lista_vars_create_float
 
 # %% ../nbs/01_creation_sqlite.ipynb 12
-def sqlite_query_join_agregada(janelas, feat_cat, lista_valor_agragador, id, safra_ref):
+def sqlite_query_join_agregada(janelas, feat_cat, list_aggregator_value, id, safra_ref):
     query_join= ""
-    for feat_cat_valor in lista_valor_agragador:
+    for feat_cat_valor in list_aggregator_value:
         for i in janelas:
             query_join += f"""
             LEFT JOIN tb_agrupada_{feat_cat}_{feat_cat_valor}_{i}M
@@ -370,27 +378,28 @@ def sqlite_query_join_agregada(janelas, feat_cat, lista_valor_agragador, id, saf
 # %% ../nbs/01_creation_sqlite.ipynb 13
 def sqlite_create_query_agregada(tb_publico, # public table: contains the public, target and reference date
                                  tb_feat, # feature table: table with columns that will be transformed into features
-                                 lista_janela, # time window list
+                                 list_window, # time window list
                                  lista_feat_num, # list of numerical columns
                                  id, # id column name 
                                  safra_ref, # reference date column name on public table
                                  safra, # date column name on feature table
                                  feat_cat, # categorical column that will be aggregated
-                                 lista_valor_agragador, # list of feat_cat values that will be aggregated into features
-                                 nome_arquivo=None, # name of the .sql file where the query is saved
+                                 list_aggregator_value, # list of feat_cat values that will be aggregated into features
+                                 file_name=None, # name of the .sql file where the query is saved
                                  status=False, # if True, it creates a table on database
                                  table_name=None, # table name created
                                  conn=None # Database connection 
                                  ):
     
 
-    query_agragada, lista_vars_jan, lista_vars_create, lista_vars_create_float = sqlite_query_agregada(lista_janela, lista_feat_num, feat_cat, lista_valor_agragador, id, safra_ref, tb_feat, safra, status)
+    query_agragada, lista_vars_jan, lista_vars_create, lista_vars_create_float = sqlite_query_agregada(list_window, lista_feat_num, feat_cat, list_aggregator_value, id, safra_ref, tb_feat, safra, status)
     
     
     if status:
         # Apagando tabela se existir do banco de dados:
         cursor = conn.cursor()
         query_drop_table = f"""
+-- Delete table with the name {table_name} 
 -- Apaga tabela com o nome {table_name}
 DROP TABLE IF EXISTS {table_name};
 """        
@@ -399,6 +408,7 @@ DROP TABLE IF EXISTS {table_name};
 
         # Query de construção de tabela 
         query_create_table = f"""
+-- Create table with the name {table_name}
 -- Criar a tabela {table_name}
 CREATE TABLE {table_name} (
     {id} TEXT,
@@ -432,7 +442,7 @@ INSERT INTO {table_name} ({id}, {safra_ref}, {lista_vars_create})
                 SELECT 
                     *        
                 FROM tb_public 
-                {sqlite_query_join_agregada(lista_janela, feat_cat, lista_valor_agragador, id, safra_ref)}
+                {sqlite_query_join_agregada(list_window, feat_cat, list_aggregator_value, id, safra_ref)}
             )
         
         {query_insert_table}
@@ -451,10 +461,10 @@ INSERT INTO {table_name} ({id}, {safra_ref}, {lista_vars_create})
   
     # Salvando arquivo em file .sql:
     try: 
-        with open(nome_arquivo, 'w') as arquivo:
+        with open(file_name, 'w') as arquivo:
             arquivo.write(query_drop_table)
             arquivo.write(query)
-        print(f'Complete query creation with {nome_arquivo} saved file')
+        print(f'Complete query creation with {file_name} saved file')
     except:
         print("Complete query creation with no saved file.")
         
