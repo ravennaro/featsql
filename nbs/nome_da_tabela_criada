@@ -1,0 +1,224 @@
+
+-- Apaga tabela com o nome nome_da_tabela_criada
+DROP TABLE IF EXISTS nome_da_tabela_criada;
+
+        
+-- Criar a tabela nome_da_tabela_criada
+CREATE TABLE nome_da_tabela_criada (
+    ID TEXT,
+    SAFRA_REF TEXT,
+
+    SUM_FEAT_NUM1_FEAT_CAT1_A_3M FLOAT, 
+    MAX_FEAT_NUM1_FEAT_CAT1_A_3M FLOAT, 
+    MIN_FEAT_NUM1_FEAT_CAT1_A_3M FLOAT,
+    AVG_FEAT_NUM1_FEAT_CAT1_A_3M FLOAT,
+        
+    SUM_FEAT_NUM2_FEAT_CAT1_A_3M FLOAT, 
+    MAX_FEAT_NUM2_FEAT_CAT1_A_3M FLOAT, 
+    MIN_FEAT_NUM2_FEAT_CAT1_A_3M FLOAT,
+    AVG_FEAT_NUM2_FEAT_CAT1_A_3M FLOAT,
+        
+    SUM_FEAT_NUM1_FEAT_CAT1_A_6M FLOAT, 
+    MAX_FEAT_NUM1_FEAT_CAT1_A_6M FLOAT, 
+    MIN_FEAT_NUM1_FEAT_CAT1_A_6M FLOAT,
+    AVG_FEAT_NUM1_FEAT_CAT1_A_6M FLOAT,
+        
+    SUM_FEAT_NUM2_FEAT_CAT1_A_6M FLOAT, 
+    MAX_FEAT_NUM2_FEAT_CAT1_A_6M FLOAT, 
+    MIN_FEAT_NUM2_FEAT_CAT1_A_6M FLOAT,
+    AVG_FEAT_NUM2_FEAT_CAT1_A_6M FLOAT,
+        
+    SUM_FEAT_NUM1_FEAT_CAT1_B_3M FLOAT, 
+    MAX_FEAT_NUM1_FEAT_CAT1_B_3M FLOAT, 
+    MIN_FEAT_NUM1_FEAT_CAT1_B_3M FLOAT,
+    AVG_FEAT_NUM1_FEAT_CAT1_B_3M FLOAT,
+        
+    SUM_FEAT_NUM2_FEAT_CAT1_B_3M FLOAT, 
+    MAX_FEAT_NUM2_FEAT_CAT1_B_3M FLOAT, 
+    MIN_FEAT_NUM2_FEAT_CAT1_B_3M FLOAT,
+    AVG_FEAT_NUM2_FEAT_CAT1_B_3M FLOAT,
+        
+    SUM_FEAT_NUM1_FEAT_CAT1_B_6M FLOAT, 
+    MAX_FEAT_NUM1_FEAT_CAT1_B_6M FLOAT, 
+    MIN_FEAT_NUM1_FEAT_CAT1_B_6M FLOAT,
+    AVG_FEAT_NUM1_FEAT_CAT1_B_6M FLOAT,
+        
+    SUM_FEAT_NUM2_FEAT_CAT1_B_6M FLOAT, 
+    MAX_FEAT_NUM2_FEAT_CAT1_B_6M FLOAT, 
+    MIN_FEAT_NUM2_FEAT_CAT1_B_6M FLOAT,
+    AVG_FEAT_NUM2_FEAT_CAT1_B_6M FLOAT
+);
+
+        WITH
+        tb_public as(
+        SELECT
+            ID,
+            SAFRA_REF
+        FROM tb_spine
+        ),
+        
+            tb_agrupada_FEAT_CAT1_A_3M as(
+                SELECT
+                    tb_public.ID,
+                    tb_public.SAFRA_REF,
+        
+                    SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_A_3M,
+                    MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_A_3M,
+                    MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_A_3M,
+                    AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_A_3M,
+        
+                    SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_A_3M,
+                    MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_A_3M,
+                    MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_A_3M,
+                    AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_A_3M
+                FROM tb_public
+                INNER JOIN tb_feat
+                    ON tb_public.ID = tb_feat.ID
+                    AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+3 months')) >= tb_public.SAFRA_REF)
+                    AND (tb_feat.SAFRA < tb_public.SAFRA_REF)
+                    AND tb_feat.FEAT_CAT1 = 'A'
+                GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+        ),
+        
+            tb_agrupada_FEAT_CAT1_A_6M as(
+                SELECT
+                    tb_public.ID,
+                    tb_public.SAFRA_REF,
+        
+                    SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_A_6M,
+                    MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_A_6M,
+                    MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_A_6M,
+                    AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_A_6M,
+        
+                    SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_A_6M,
+                    MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_A_6M,
+                    MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_A_6M,
+                    AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_A_6M
+                FROM tb_public
+                INNER JOIN tb_feat
+                    ON tb_public.ID = tb_feat.ID
+                    AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+6 months')) >= tb_public.SAFRA_REF)
+                    AND (tb_feat.SAFRA < tb_public.SAFRA_REF)
+                    AND tb_feat.FEAT_CAT1 = 'A'
+                GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+        ),
+        
+            tb_agrupada_FEAT_CAT1_B_3M as(
+                SELECT
+                    tb_public.ID,
+                    tb_public.SAFRA_REF,
+        
+                    SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_B_3M,
+                    MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_B_3M,
+                    MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_B_3M,
+                    AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_B_3M,
+        
+                    SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_B_3M,
+                    MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_B_3M,
+                    MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_B_3M,
+                    AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_B_3M
+                FROM tb_public
+                INNER JOIN tb_feat
+                    ON tb_public.ID = tb_feat.ID
+                    AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+3 months')) >= tb_public.SAFRA_REF)
+                    AND (tb_feat.SAFRA < tb_public.SAFRA_REF)
+                    AND tb_feat.FEAT_CAT1 = 'B'
+                GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+        ),
+        
+            tb_agrupada_FEAT_CAT1_B_6M as(
+                SELECT
+                    tb_public.ID,
+                    tb_public.SAFRA_REF,
+        
+                    SUM(COALESCE(tb_feat.FEAT_NUM1,0))  AS SUM_FEAT_NUM1_FEAT_CAT1_B_6M,
+                    MAX(COALESCE(tb_feat.FEAT_NUM1,0))  AS MAX_FEAT_NUM1_FEAT_CAT1_B_6M,
+                    MIN(COALESCE(tb_feat.FEAT_NUM1,0))  AS MIN_FEAT_NUM1_FEAT_CAT1_B_6M,
+                    AVG(COALESCE(tb_feat.FEAT_NUM1,0))  AS AVG_FEAT_NUM1_FEAT_CAT1_B_6M,
+        
+                    SUM(COALESCE(tb_feat.FEAT_NUM2,0))  AS SUM_FEAT_NUM2_FEAT_CAT1_B_6M,
+                    MAX(COALESCE(tb_feat.FEAT_NUM2,0))  AS MAX_FEAT_NUM2_FEAT_CAT1_B_6M,
+                    MIN(COALESCE(tb_feat.FEAT_NUM2,0))  AS MIN_FEAT_NUM2_FEAT_CAT1_B_6M,
+                    AVG(COALESCE(tb_feat.FEAT_NUM2,0))  AS AVG_FEAT_NUM2_FEAT_CAT1_B_6M
+                FROM tb_public
+                INNER JOIN tb_feat
+                    ON tb_public.ID = tb_feat.ID
+                    AND (strftime('%Y-%m-%d', date(tb_feat.SAFRA, '+6 months')) >= tb_public.SAFRA_REF)
+                    AND (tb_feat.SAFRA < tb_public.SAFRA_REF)
+                    AND tb_feat.FEAT_CAT1 = 'B'
+                GROUP BY tb_public.ID, tb_public.SAFRA_REF 
+        ),
+        
+
+        tb_join AS (
+                SELECT 
+                    *        
+                FROM tb_public 
+                
+            LEFT JOIN tb_agrupada_FEAT_CAT1_A_3M
+                ON tb_public.ID = tb_agrupada_FEAT_CAT1_A_3M.ID
+                AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_A_3M.SAFRA_REF
+        
+            LEFT JOIN tb_agrupada_FEAT_CAT1_A_6M
+                ON tb_public.ID = tb_agrupada_FEAT_CAT1_A_6M.ID
+                AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_A_6M.SAFRA_REF
+        
+            LEFT JOIN tb_agrupada_FEAT_CAT1_B_3M
+                ON tb_public.ID = tb_agrupada_FEAT_CAT1_B_3M.ID
+                AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_B_3M.SAFRA_REF
+        
+            LEFT JOIN tb_agrupada_FEAT_CAT1_B_6M
+                ON tb_public.ID = tb_agrupada_FEAT_CAT1_B_6M.ID
+                AND tb_public.SAFRA_REF = tb_agrupada_FEAT_CAT1_B_6M.SAFRA_REF
+        
+            )
+        
+        
+INSERT INTO nome_da_tabela_criada (ID, SAFRA_REF, SUM_FEAT_NUM1_FEAT_CAT1_A_3M, MAX_FEAT_NUM1_FEAT_CAT1_A_3M, MIN_FEAT_NUM1_FEAT_CAT1_A_3M,AVG_FEAT_NUM1_FEAT_CAT1_A_3M,SUM_FEAT_NUM2_FEAT_CAT1_A_3M, MAX_FEAT_NUM2_FEAT_CAT1_A_3M, MIN_FEAT_NUM2_FEAT_CAT1_A_3M,AVG_FEAT_NUM2_FEAT_CAT1_A_3M,SUM_FEAT_NUM1_FEAT_CAT1_A_6M, MAX_FEAT_NUM1_FEAT_CAT1_A_6M, MIN_FEAT_NUM1_FEAT_CAT1_A_6M,AVG_FEAT_NUM1_FEAT_CAT1_A_6M,SUM_FEAT_NUM2_FEAT_CAT1_A_6M, MAX_FEAT_NUM2_FEAT_CAT1_A_6M, MIN_FEAT_NUM2_FEAT_CAT1_A_6M,AVG_FEAT_NUM2_FEAT_CAT1_A_6M,SUM_FEAT_NUM1_FEAT_CAT1_B_3M, MAX_FEAT_NUM1_FEAT_CAT1_B_3M, MIN_FEAT_NUM1_FEAT_CAT1_B_3M,AVG_FEAT_NUM1_FEAT_CAT1_B_3M,SUM_FEAT_NUM2_FEAT_CAT1_B_3M, MAX_FEAT_NUM2_FEAT_CAT1_B_3M, MIN_FEAT_NUM2_FEAT_CAT1_B_3M,AVG_FEAT_NUM2_FEAT_CAT1_B_3M,SUM_FEAT_NUM1_FEAT_CAT1_B_6M, MAX_FEAT_NUM1_FEAT_CAT1_B_6M, MIN_FEAT_NUM1_FEAT_CAT1_B_6M,AVG_FEAT_NUM1_FEAT_CAT1_B_6M,SUM_FEAT_NUM2_FEAT_CAT1_B_6M, MAX_FEAT_NUM2_FEAT_CAT1_B_6M, MIN_FEAT_NUM2_FEAT_CAT1_B_6M,AVG_FEAT_NUM2_FEAT_CAT1_B_6M)
+
+
+        SELECT 
+            tb_join.ID,
+            tb_join.SAFRA_REF,
+            
+                    tb_join.SUM_FEAT_NUM1_FEAT_CAT1_A_3M,
+                    tb_join.MAX_FEAT_NUM1_FEAT_CAT1_A_3M,
+                    tb_join.MIN_FEAT_NUM1_FEAT_CAT1_A_3M,
+                    tb_join.AVG_FEAT_NUM1_FEAT_CAT1_A_3M,
+        
+                    tb_join.SUM_FEAT_NUM2_FEAT_CAT1_A_3M,
+                    tb_join.MAX_FEAT_NUM2_FEAT_CAT1_A_3M,
+                    tb_join.MIN_FEAT_NUM2_FEAT_CAT1_A_3M,
+                    tb_join.AVG_FEAT_NUM2_FEAT_CAT1_A_3M,
+        
+                    tb_join.SUM_FEAT_NUM1_FEAT_CAT1_A_6M,
+                    tb_join.MAX_FEAT_NUM1_FEAT_CAT1_A_6M,
+                    tb_join.MIN_FEAT_NUM1_FEAT_CAT1_A_6M,
+                    tb_join.AVG_FEAT_NUM1_FEAT_CAT1_A_6M,
+        
+                    tb_join.SUM_FEAT_NUM2_FEAT_CAT1_A_6M,
+                    tb_join.MAX_FEAT_NUM2_FEAT_CAT1_A_6M,
+                    tb_join.MIN_FEAT_NUM2_FEAT_CAT1_A_6M,
+                    tb_join.AVG_FEAT_NUM2_FEAT_CAT1_A_6M,
+        
+                    tb_join.SUM_FEAT_NUM1_FEAT_CAT1_B_3M,
+                    tb_join.MAX_FEAT_NUM1_FEAT_CAT1_B_3M,
+                    tb_join.MIN_FEAT_NUM1_FEAT_CAT1_B_3M,
+                    tb_join.AVG_FEAT_NUM1_FEAT_CAT1_B_3M,
+        
+                    tb_join.SUM_FEAT_NUM2_FEAT_CAT1_B_3M,
+                    tb_join.MAX_FEAT_NUM2_FEAT_CAT1_B_3M,
+                    tb_join.MIN_FEAT_NUM2_FEAT_CAT1_B_3M,
+                    tb_join.AVG_FEAT_NUM2_FEAT_CAT1_B_3M,
+        
+                    tb_join.SUM_FEAT_NUM1_FEAT_CAT1_B_6M,
+                    tb_join.MAX_FEAT_NUM1_FEAT_CAT1_B_6M,
+                    tb_join.MIN_FEAT_NUM1_FEAT_CAT1_B_6M,
+                    tb_join.AVG_FEAT_NUM1_FEAT_CAT1_B_6M,
+        
+                    tb_join.SUM_FEAT_NUM2_FEAT_CAT1_B_6M,
+                    tb_join.MAX_FEAT_NUM2_FEAT_CAT1_B_6M,
+                    tb_join.MIN_FEAT_NUM2_FEAT_CAT1_B_6M,
+                    tb_join.AVG_FEAT_NUM2_FEAT_CAT1_B_6M
+        FROM tb_join;
+    
